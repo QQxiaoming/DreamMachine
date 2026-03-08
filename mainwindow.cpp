@@ -28,6 +28,7 @@
 #include <QPushButton>
 #include <QPixmap>
 #include <QRandomGenerator>
+#include <QBuffer>
 #include <QSpinBox>
 #include <QTcpSocket>
 #include <QTextEdit>
@@ -37,6 +38,25 @@
 #include <limits>
 
 namespace {
+
+constexpr int kMaxResolution = 1280;
+
+QSize clampResolutionKeepAspect(int width, int height)
+{
+    if (width <= 0 || height <= 0) {
+        return QSize(width, height);
+    }
+
+    if (width <= kMaxResolution && height <= kMaxResolution) {
+        return QSize(width, height);
+    }
+
+    const double scale = qMin(static_cast<double>(kMaxResolution) / static_cast<double>(width),
+                              static_cast<double>(kMaxResolution) / static_cast<double>(height));
+    const int scaledW = qMax(1, qRound(static_cast<double>(width) * scale));
+    const int scaledH = qMax(1, qRound(static_cast<double>(height) * scale));
+    return QSize(scaledW, scaledH);
+}
 
 bool sendPacket(QTcpSocket &socket, const QJsonObject &payload, QString &error)
 {
@@ -393,10 +413,16 @@ void MainWindow::refreshTargetSizeEditability()
     int width = 0;
     int height = 0;
     if (readImageSize(firstImagePath, width, height)) {
-        m_widthSpin->setValue(width);
-        m_heightSpin->setValue(height);
-        m_widthSpin->setToolTip("Locked to first input image width.");
-        m_heightSpin->setToolTip("Locked to first input image height.");
+        const QSize clamped = clampResolutionKeepAspect(width, height);
+        m_widthSpin->setValue(clamped.width());
+        m_heightSpin->setValue(clamped.height());
+        if (clamped.width() != width || clamped.height() != height) {
+            m_widthSpin->setToolTip("Locked to first input image width (auto scaled to <=1280).");
+            m_heightSpin->setToolTip("Locked to first input image height (auto scaled to <=1280).");
+        } else {
+            m_widthSpin->setToolTip("Locked to first input image width.");
+            m_heightSpin->setToolTip("Locked to first input image height.");
+        }
     } else {
         m_widthSpin->setToolTip("Cannot read first input image size.");
         m_heightSpin->setToolTip("Cannot read first input image size.");
@@ -799,8 +825,11 @@ void MainWindow::startInference()
         params.inputImages.append(m_inputImageList->item(i)->text());
     }
     params.noInputImages = params.inputImages.isEmpty();
-    params.targetWidth = m_widthSpin->value();
-    params.targetHeight = m_heightSpin->value();
+    {
+        const QSize clampedTarget = clampResolutionKeepAspect(m_widthSpin->value(), m_heightSpin->value());
+        params.targetWidth = clampedTarget.width();
+        params.targetHeight = clampedTarget.height();
+    }
     params.prompt = m_promptEdit->toPlainText();
     params.outputDir = m_outputDirEdit->text().trimmed();
     params.seed = effectiveSeed;
@@ -829,12 +858,24 @@ InferResult MainWindow::runInferenceRequest(const InferRequestParams &params) co
 
     QJsonArray inputImages;
     for (const QString &path : params.inputImages) {
-        QFile imageFile(path);
-        if (!imageFile.open(QIODevice::ReadOnly)) {
-            result.error = QString("Failed to read input image: %1").arg(path);
+        QImage image(path);
+        if (image.isNull()) {
+            result.error = QString("Failed to decode input image: %1").arg(path);
             return result;
         }
-        inputImages.append(QString::fromLatin1(imageFile.readAll().toBase64()));
+
+        const QSize clamped = clampResolutionKeepAspect(image.width(), image.height());
+        if (clamped.width() != image.width() || clamped.height() != image.height()) {
+            image = image.scaled(clamped, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
+
+        QByteArray encoded;
+        QBuffer buffer(&encoded);
+        if (!buffer.open(QIODevice::WriteOnly) || !image.save(&buffer, "PNG")) {
+            result.error = QString("Failed to encode input image: %1").arg(path);
+            return result;
+        }
+        inputImages.append(QString::fromLatin1(encoded.toBase64()));
     }
 
     QJsonObject req;

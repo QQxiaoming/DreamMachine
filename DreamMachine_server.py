@@ -324,6 +324,16 @@ class DreamMachineService:
         if input_images:
             # 第 1 张作为主图，并用其尺寸作为目标生成尺寸
             main_image, width, height = input_images[0]
+            target_width = req.get("target_width")
+            target_height = req.get("target_height")
+            if target_width is not None:
+                target_width = int(target_width)
+                if target_width > 0:
+                    width = target_width
+            if target_height is not None:
+                target_height = int(target_height)
+                if target_height > 0:
+                    height = target_height
         else:
             target_width = req.get("target_width")
             target_height = req.get("target_height")
