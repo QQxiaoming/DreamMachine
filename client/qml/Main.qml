@@ -10,6 +10,9 @@ ApplicationWindow {
     height: 900
     visible: true
     title: "DreamMachine Mobile"
+    property bool previewFullscreen: false
+    property real previewFullscreenScale: 1.0
+    property real previewPinchStartScale: 1.0
 
     Material.theme: Material.Light
     Material.accent: Material.Teal
@@ -550,6 +553,12 @@ ApplicationWindow {
                             wrapMode: Text.Wrap
                             visible: text.length > 0
                         }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            enabled: viewModel.previewImageUrl.length > 0
+                            onClicked: window.previewFullscreen = true
+                        }
                     }
                 }
             }
@@ -623,5 +632,58 @@ ApplicationWindow {
         defaultSuffix: "json"
         nameFilters: ["JSON (*.json)", "All files (*)"]
         onAccepted: viewModel.savePresetToUrl(selectedFile)
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        visible: window.previewFullscreen
+        z: 1000
+        color: "#e6000000"
+
+        onVisibleChanged: {
+            if (visible) {
+                window.previewFullscreenScale = 1.0
+                window.previewPinchStartScale = 1.0
+            }
+        }
+
+        Image {
+            id: fullscreenPreviewImage
+            anchors.fill: parent
+            anchors.margins: 16
+            cache: false
+            smooth: true
+            fillMode: Image.PreserveAspectFit
+            source: viewModel.previewImageUrl
+            visible: viewModel.previewImageUrl.length > 0
+            scale: window.previewFullscreenScale
+        }
+
+        PinchArea {
+            anchors.fill: parent
+            enabled: viewModel.previewImageUrl.length > 0
+
+            onPinchStarted: {
+                window.previewPinchStartScale = window.previewFullscreenScale
+            }
+
+            onPinchUpdated: {
+                const scaled = window.previewPinchStartScale * pinch.scale
+                window.previewFullscreenScale = Math.max(1.0, Math.min(4.0, scaled))
+            }
+        }
+
+        Label {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 24
+            color: "#ffffff"
+            text: "Pinch to zoom, tap image to exit fullscreen"
+            visible: viewModel.previewImageUrl.length > 0
+        }
+
+        TapHandler {
+            onTapped: window.previewFullscreen = false
+        }
     }
 }
