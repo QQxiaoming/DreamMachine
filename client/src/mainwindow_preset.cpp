@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "filedialog.h"
+#include "globalsetting.h"
 
 #include <QComboBox>
 #include <QDir>
@@ -32,11 +33,13 @@ bool MainWindow::applyPresetObject(const QJsonObject &preset, QString &error)
 }
 
 void MainWindow::savePreset()
-{
+{  
+    GlobalSetting settings;
+    QString lastPath = settings.value("Global/presetPath", QDir::current().absolutePath()).toString();
     const QString filePath = FileDialog::getSaveFileName(
         this,
         "Save Preset",
-        QDir::current().absoluteFilePath("dreammachine_preset.json"),
+        QDir(lastPath).absoluteFilePath("dreammachine_preset.json"),
         "JSON (*.json);;All files (*.*)");
     if (filePath.isEmpty()) {
         return;
@@ -48,21 +51,31 @@ void MainWindow::savePreset()
         return;
     }
 
+    if (!filePath.isEmpty()) {
+        settings.setValue("Global/presetPath", QFileInfo(filePath).absolutePath());
+    }
+
     m_statusLabel->setText("Preset Saved");
 }
 
 void MainWindow::loadPreset()
 {
+    GlobalSetting settings;
+    QString lastPath = settings.value("Global/presetPath", QDir::current().absolutePath()).toString();
     const QString filePath = FileDialog::getOpenFileName(
         this,
         "Load Preset",
-        QDir::current().absoluteFilePath("dreammachine_preset.json"),
+        QDir(lastPath).absoluteFilePath("dreammachine_preset.json"),
         "Preset files (*.json *.png);;JSON (*.json);;PNG Images (*.png);;All files (*.*)");
     if (filePath.isEmpty()) {
         return;
     }
 
     loadPresetFromFile(filePath, true);
+
+    if (!filePath.isEmpty()) {
+        settings.setValue("Global/presetPath", QFileInfo(filePath).absolutePath());
+    }
 }
 
 bool MainWindow::loadPresetFromFile(const QString &filePath, bool showErrors)
@@ -90,7 +103,9 @@ bool MainWindow::loadPresetFromFile(const QString &filePath, bool showErrors)
 
 void MainWindow::autoLoadStartupPreset()
 {
-    const QString presetPath = QDir::current().absoluteFilePath("dreammachine_preset.json");
+    GlobalSetting settings;
+    QString lastPath = settings.value("Global/presetPath", QDir::current().absolutePath()).toString();
+    const QString presetPath = QDir(lastPath).absoluteFilePath("dreammachine_preset.json");
     if (!QFileInfo::exists(presetPath)) {
         return;
     }

@@ -1,12 +1,17 @@
 #include "mainwindow.h"
+#include "globalsetting.h"
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+    QApplication application(argc, argv);
+
+    GlobalSetting settings;
+
+    MainWindow window;
+    window.show();
+
+    return application.exec();
 }

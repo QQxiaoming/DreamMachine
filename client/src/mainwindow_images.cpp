@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "mainwindow_utils.h"
 #include "filedialog.h"
+#include "globalsetting.h"
 
 #include <QDir>
 #include <QJsonObject>
@@ -47,10 +48,12 @@ void MainWindow::refreshTargetSizeEditability()
 
 void MainWindow::addInputImages()
 {
+    GlobalSetting settings;
+    QString lastPath = settings.value("Global/addInputImagesPath", QDir::current().absolutePath()).toString();
     const QStringList files = FileDialog::getOpenFileNames(
         this,
         "Select Input Images",
-        QDir::current().absolutePath(),
+        lastPath,
         "Images (*.png *.jpg *.jpeg *.webp *.bmp);;All files (*.*)");
 
     for (const QString &file : files) {
@@ -59,6 +62,10 @@ void MainWindow::addInputImages()
             break;
         }
         m_inputImageList->addItem(file);
+    }
+
+    if (!files.isEmpty()) {
+        settings.setValue("Global/addInputImagesPath", QFileInfo(files.first()).absolutePath());
     }
 
     refreshTargetSizeEditability();
