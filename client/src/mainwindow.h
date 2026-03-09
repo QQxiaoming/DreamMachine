@@ -1,6 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "image_service.h"
+#include "inference_client.h"
+#include "inference_types.h"
+#include "preset_storage.h"
+#include "settings_mapper.h"
+#include "aspectratiopixmaplabel.h"
+
 #include <QMainWindow>
 #include <QByteArray>
 #include <QJsonObject>
@@ -25,36 +32,6 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-struct InferResult {
-    bool ok = false;
-    QString error;
-    QByteArray generatedImageBytes;
-    QString outputFormat;
-    qint64 seed = 0;
-    int width = 0;
-    int height = 0;
-    QString ckptPath;
-};
-
-struct InferRequestParams {
-    QStringList inputImages;
-    int targetWidth = 0;
-    int targetHeight = 0;
-    bool noInputImages = false;
-    QString prompt;
-    QString outputDir;
-    qint64 seed = 0;
-    int steps = 4;
-    double cfg = 1.0;
-    QString samplerName;
-    QString scheduler;
-    double denoise = 1.0;
-    QString negPrompt;
-    QString outputFormat;
-    QString host;
-    int port = 17890;
-};
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -68,7 +45,6 @@ private:
     void connectSignals();
     void setRunningState(bool running);
     void refreshTargetSizeEditability();
-    bool readImageSize(const QString &imagePath, int &width, int &height) const;
     void addInputImages();
     void removeSelectedImage();
     void chooseOutputDirectory();
@@ -81,7 +57,6 @@ private:
     QJsonObject collectPresetObject() const;
     bool applyPresetObject(const QJsonObject &preset, QString &error);
     void startInference();
-    InferResult runInferenceRequest(const InferRequestParams &params) const;
 
     Ui::MainWindow *ui;
 
@@ -108,11 +83,16 @@ private:
     QPushButton *m_savePresetButton = nullptr;
     QPushButton *m_loadPresetButton = nullptr;
     QTextEdit *m_resultEdit = nullptr;
-    QLabel *m_previewLabel = nullptr;
+    AspectRatioPixmapLabel *m_previewLabel = nullptr;
     QLabel *m_statusLabel = nullptr;
     QFutureWatcher<InferResult> *m_watcher = nullptr;
     QByteArray m_lastGeneratedImageBytes;
     QString m_lastGeneratedFormat;
     qint64 m_lastEffectiveSeed = 0;
+
+    InferenceClient m_inferenceClient;
+    PresetStorage m_presetStorage;
+    ImageService m_imageService;
+    SettingsMapper m_settingsMapper;
 };
 #endif // MAINWINDOW_H

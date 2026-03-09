@@ -366,21 +366,16 @@ class DreamMachineService:
         width = int(target_width) if target_width is not None else None
         height = int(target_height) if target_height is not None else None
 
-        if width is not None and width <= 0:
-            raise ValueError("target_width must be a positive integer")
-        if height is not None and height <= 0:
-            raise ValueError("target_height must be a positive integer")
-
-        if (width is None or height is None) and input_images_b64:
+        if input_images_b64 and (width is None or width <= 0 or height is None or height <= 0):
             image_width, image_height = _get_first_image_size(input_images_b64[0])
-            if width is None:
+            if width is None or width <= 0:
                 width = image_width
-            if height is None:
+            if height is None or height <= 0:
                 height = image_height
 
-        if width is None:
+        if width is None or width <= 0:
             width = 512
-        if height is None:
+        if height is None or height <= 0:
             height = 512
 
         output_image_bytes = _build_mock_image_bytes(width, height, seed, output_format)
