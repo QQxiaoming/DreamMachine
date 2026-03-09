@@ -51,14 +51,22 @@ def _resolve_comfy_root():
     )
 
 
-COMFY_ROOT = _resolve_comfy_root()
+COMFY_ROOT = None
+
+
+def _get_comfy_root():
+    global COMFY_ROOT
+    if COMFY_ROOT is None:
+        COMFY_ROOT = _resolve_comfy_root()
+    return COMFY_ROOT
 
 
 def _prepare_import_path():
     # 确保当前仓库根目录优先于系统路径，避免导入到同名第三方模块
-    if COMFY_ROOT in sys.path:
-        sys.path.remove(COMFY_ROOT)
-    sys.path.insert(0, COMFY_ROOT)
+    comfy_root = _get_comfy_root()
+    if comfy_root in sys.path:
+        sys.path.remove(comfy_root)
+    sys.path.insert(0, comfy_root)
 
 
 def _bootstrap_comfy_imports():
@@ -85,14 +93,15 @@ def _fix_shadowed_utils_module():
 
 
 def _force_load_local_utils_package():
-    utils_init = os.path.join(COMFY_ROOT, "utils", "__init__.py")
+    comfy_root = _get_comfy_root()
+    utils_init = os.path.join(comfy_root, "utils", "__init__.py")
     if not os.path.exists(utils_init):
         raise ModuleNotFoundError(f"Local utils package not found: {utils_init}")
 
     spec = importlib.util.spec_from_file_location(
         "utils",
         utils_init,
-        submodule_search_locations=[os.path.join(COMFY_ROOT, "utils")],
+        submodule_search_locations=[os.path.join(comfy_root, "utils")],
     )
     if spec is None or spec.loader is None:
         raise ModuleNotFoundError("Failed to build module spec for local utils package")
@@ -188,6 +197,55 @@ def encode_image(imagedata, image_format="PNG"):
         return out.getvalue()
 
 
+def _extract_input_images_b64(req):
+    input_images_b64 = req.get("input_images_b64")
+    if input_images_b64 is None:
+        # 兼容旧协议：单图字段
+        legacy_image_b64 = req.get("input_image_b64")
+        if legacy_image_b64:
+            input_images_b64 = [legacy_image_b64]
+        else:
+            input_images_b64 = []
+
+    if len(input_images_b64) > 4:
+        raise ValueError("input_images_b64 supports up to 4 images")
+
+    return input_images_b64
+
+
+def _normalize_output_format(req):
+    output_format = str(req.get("output_format", "PNG")).upper()
+    if output_format not in {"PNG", "JPEG", "JPG", "WEBP"}:
+        raise ValueError(f"Unsupported output_format: {output_format}")
+    if output_format == "JPG":
+        output_format = "JPEG"
+    return output_format
+
+
+def _get_first_image_size(image_b64):
+    image_bytes = base64.b64decode(image_b64)
+    with Image.open(io.BytesIO(image_bytes)) as image:
+        return image.width, image.height
+
+
+def _build_mock_image_bytes(width, height, seed, image_format):
+    # 生成一张可重复的伪彩色渐变图，便于客户端验证收包与解码链路
+    x = np.linspace(0, 255, num=width, dtype=np.uint8)
+    y = np.linspace(0, 255, num=height, dtype=np.uint8)
+    xx, yy = np.meshgrid(x, y)
+
+    xx16 = xx.astype(np.uint16)
+    yy16 = yy.astype(np.uint16)
+    r = (xx16 + (seed & 0xFF)) % 256
+    g = (yy16 + ((seed >> 8) & 0xFF)) % 256
+    b = ((xx16 // 2) + (yy16 // 2) + ((seed >> 16) & 0xFF)) % 256
+    mock_rgb = np.stack([r, g, b], axis=-1).astype(np.uint8)
+
+    with io.BytesIO() as out:
+        Image.fromarray(mock_rgb, mode="RGB").save(out, format=image_format)
+        return out.getvalue()
+
+
 def _force_cpu_mode():
     # 强制切到 CPU 并清空已加载模型缓存，避免显存路径残留
     from comfy.cli_args import args as comfy_args
@@ -269,11 +327,16 @@ def send_packet(conn, payload):
 
 
 class DreamMachineService:
-    def __init__(self, ckpt_path, cpu_mode=False):
+    def __init__(self, ckpt_path, cpu_mode=False, fake_mode=False):
         self._ckpt_path = ckpt_path
+        self._fake_mode = bool(fake_mode)
         self._model = None
         self._clip = None
         self._vae = None
+
+        if self._fake_mode:
+            print("[DreamMachineServer] fake mode enabled: skip model loading and real inference")
+            return
 
         _bootstrap_comfy_imports()
         ensure_extra_nodes_loaded()
@@ -293,27 +356,56 @@ class DreamMachineService:
         self._model, self._clip, self._vae = out[:3]
         self._ckpt_path = ckpt_path
 
-    def infer(self, req):
-        input_images_b64 = req.get("input_images_b64")
-        if input_images_b64 is None:
-            # 兼容旧协议：单图字段
-            legacy_image_b64 = req.get("input_image_b64")
-            if legacy_image_b64:
-                input_images_b64 = [legacy_image_b64]
-            else:
-                input_images_b64 = []
+    def _infer_fake(self, req):
+        input_images_b64 = _extract_input_images_b64(req)
+        output_format = _normalize_output_format(req)
+        seed = int(req.get("seed", int.from_bytes(os.urandom(4), "big")))
 
-        if len(input_images_b64) > 4:
-            raise ValueError("input_images_b64 supports up to 4 images")
+        target_width = req.get("target_width")
+        target_height = req.get("target_height")
+        width = int(target_width) if target_width is not None else None
+        height = int(target_height) if target_height is not None else None
+
+        if width is not None and width <= 0:
+            raise ValueError("target_width must be a positive integer")
+        if height is not None and height <= 0:
+            raise ValueError("target_height must be a positive integer")
+
+        if (width is None or height is None) and input_images_b64:
+            image_width, image_height = _get_first_image_size(input_images_b64[0])
+            if width is None:
+                width = image_width
+            if height is None:
+                height = image_height
+
+        if width is None:
+            width = 512
+        if height is None:
+            height = 512
+
+        output_image_bytes = _build_mock_image_bytes(width, height, seed, output_format)
+        output_image_b64 = base64.b64encode(output_image_bytes).decode("ascii")
+
+        return {
+            "ok": True,
+            "output_image_b64": output_image_b64,
+            "output_format": output_format,
+            "seed": seed,
+            "width": width,
+            "height": height,
+            "ckpt_path": self._ckpt_path,
+            "fake_mode": True,
+        }
+
+    def infer(self, req):
+        if self._fake_mode:
+            return self._infer_fake(req)
+
+        input_images_b64 = _extract_input_images_b64(req)
 
         prompt = req["prompt"]
         neg_prompt = req.get("neg_prompt", "")
-        output_format = str(req.get("output_format", "PNG")).upper()
-
-        if output_format not in {"PNG", "JPEG", "JPG", "WEBP"}:
-            raise ValueError(f"Unsupported output_format: {output_format}")
-        if output_format == "JPG":
-            output_format = "JPEG"
+        output_format = _normalize_output_format(req)
 
         input_images = []
         for image_b64 in input_images_b64:
@@ -384,6 +476,7 @@ class DreamMachineService:
             "width": width,
             "height": height,
             "ckpt_path": self._ckpt_path,
+            "fake_mode": False,
         }
 
 
@@ -421,12 +514,21 @@ def parse_args():
         #default="D:\\ComfyUI_Mie_V6.01\\ComfyUI\\models\\checkpoints\\QWEN\\Qwen-Rapid-AIO-NSFW-v19.safetensors",
     )
     p.add_argument("--cpu_mode", action="store_true", help="Force CPU mode")
+    p.add_argument(
+        "--fake_mode",
+        action="store_true",
+        help="Skip model loading/inference and return a synthetic image for client tests",
+    )
     return p.parse_args()
 
 
 def main():
     args = parse_args()
-    service = DreamMachineService(ckpt_path=args.ckpt_path, cpu_mode=args.cpu_mode)
+    service = DreamMachineService(
+        ckpt_path=args.ckpt_path,
+        cpu_mode=args.cpu_mode,
+        fake_mode=args.fake_mode,
+    )
     serve_forever(args.host, args.port, service)
 
 

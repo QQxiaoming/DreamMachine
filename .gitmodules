@@ -1,0 +1,3 @@
+[submodule "server/ComfyUI"]
+	path = server/ComfyUI
+	url = https://github.com/QQxiaoming/ComfyUI.git
