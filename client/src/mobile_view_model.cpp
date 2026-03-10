@@ -1,6 +1,7 @@
 #include "mobile_view_model.h"
 
 #include "globalsetting.h"
+#include "ios_photo_library.h"
 #include "mainwindow_utils.h"
 
 #include <QDir>
@@ -579,6 +580,37 @@ void MobileViewModel::saveGeneratedImage()
 
 void MobileViewModel::saveGeneratedImageToAlbum()
 {
+#if defined(Q_OS_IOS)
+    const IosPhotoLibrarySaveResult saveResult = saveImageBytesToPhotoLibrary(m_lastGeneratedImageBytes);
+    if (!saveResult.ok) {
+        if (setStringIfChanged(m_lastError, saveResult.error)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    if (setStringIfChanged(m_lastError, QString())) {
+        emit lastErrorChanged();
+    }
+
+    m_statusText = "Saved To Album";
+    emit statusTextChanged();
+
+    if (!m_resultText.isEmpty()) {
+        m_resultText.append('\n');
+    }
+
+    if (saveResult.assetLocalIdentifier.isEmpty()) {
+        m_resultText.append("Saved image to iOS Photos.");
+    } else {
+        m_resultText.append(QString("Saved image to iOS Photos: %1").arg(saveResult.assetLocalIdentifier));
+    }
+    emit resultTextChanged();
+    return;
+#endif
+
     const QString albumDirPath = defaultPicturesDirPath();
     if (albumDirPath.isEmpty()) {
         if (setStringIfChanged(m_lastError, "Cannot resolve pictures directory for album save.")) {

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(DreamMachine VERSION 0.1 LANGUAGES CXX)
 
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    enable_language(OBJCXX)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
@@ -43,10 +47,17 @@ set(DREAMMACHINE_COMMON_HEADERS
     src/image_service.h
     src/inference_client.h
     src/inference_types.h
+    src/ios_photo_library.h
     src/mainwindow_utils.h
     src/preset_storage.h
     src/util/globalsetting.h
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    list(APPEND DREAMMACHINE_COMMON_SOURCES src/ios_photo_library_ios.mm)
+else()
+    list(APPEND DREAMMACHINE_COMMON_SOURCES src/ios_photo_library_stub.cpp)
+endif()
 
 set(DREAMMACHINE_MOBILE_SOURCES
     src/mobile_view_model.cpp
@@ -189,6 +200,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     qt_import_plugins(${CMAKE_PROJECT_NAME}
         INCLUDE Qt6::QIosOptionalPlugin_NSPhotoLibraryPlugin
     )
+
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE "-framework Photos")
 endif()
 
 ## Windows
