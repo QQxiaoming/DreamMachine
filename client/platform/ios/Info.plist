@@ -66,5 +66,8 @@
 
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>DreamMachine needs permission to save generated images to your photo library.</string>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>DreamMachine needs access to your local network to connect to inference servers on your LAN.</string>
 </dict>
 </plist>

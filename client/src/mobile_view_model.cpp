@@ -581,9 +581,9 @@ void MobileViewModel::saveGeneratedImage()
 void MobileViewModel::saveGeneratedImageToAlbum()
 {
 #if defined(Q_OS_IOS)
-    const IosPhotoLibrarySaveResult saveResult = saveImageBytesToPhotoLibrary(m_lastGeneratedImageBytes);
-    if (!saveResult.ok) {
-        if (setStringIfChanged(m_lastError, saveResult.error)) {
+    const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(m_lastGeneratedImageBytes);
+    if (!iosSaveResult.ok) {
+        if (setStringIfChanged(m_lastError, iosSaveResult.error)) {
             emit lastErrorChanged();
         }
         m_statusText = "Save Failed";
@@ -602,14 +602,13 @@ void MobileViewModel::saveGeneratedImageToAlbum()
         m_resultText.append('\n');
     }
 
-    if (saveResult.assetLocalIdentifier.isEmpty()) {
+    if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
         m_resultText.append("Saved image to iOS Photos.");
     } else {
-        m_resultText.append(QString("Saved image to iOS Photos: %1").arg(saveResult.assetLocalIdentifier));
+        m_resultText.append(QString("Saved image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
     }
     emit resultTextChanged();
-    return;
-#endif
+#else
 
     const QString albumDirPath = defaultPicturesDirPath();
     if (albumDirPath.isEmpty()) {
@@ -650,6 +649,7 @@ void MobileViewModel::saveGeneratedImageToAlbum()
     }
     m_resultText.append(QString("Saved image: %1").arg(saveResult.filePath));
     emit resultTextChanged();
+#endif
 }
 
 void MobileViewModel::savePresetToUrl(const QUrl &url)
