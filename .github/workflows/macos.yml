@@ -40,10 +40,10 @@ jobs:
         run: |
           cd client
           ${{env.QT_PATH}}/bin/qt-cmake --version
-          ${{env.QT_PATH}}/bin/qt-cmake -B build/ -G Xcode \
+          ${{env.QT_PATH}}/bin/qt-cmake -B build/ -G Ninja \
             -DCMAKE_BUILD_TYPE=Release
-          cmake --build build/ --config Release
-          cp -r ./build/Release/DreamMachine.app ../
+          cmake --build build/
+          cp -r ./build/DreamMachine.app ../
 
       - name: Upload build asserts
         uses: actions/upload-artifact@v7

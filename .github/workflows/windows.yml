@@ -40,8 +40,8 @@ jobs:
           QT_PATH: D:\a\DreamMachine\Qt\6.8.0\msvc2022_64
         run: |
           cd client
-          "%QT_PATH%\bin\qt-cmake" --version
-          "%QT_PATH%\bin\qt-cmake" -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+          call "%QT_PATH%\bin\qt-cmake" --version
+          call "%QT_PATH%\bin\qt-cmake" -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
           cmake --build build --config Release
           copy build\Release\DreamMachine.exe ..\
 
