@@ -43,10 +43,10 @@ jobs:
           ${{env.QT_PATH}}/bin/qt-cmake -B build/ -G Ninja \
             -DCMAKE_BUILD_TYPE=Release
           cmake --build build/
-          cp -r ./build/DreamMachine.app ../
+          cp ./build/DreamMachine ../
 
-      - name: Upload build asserts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
           path: |
-            DreamMachine.app
+            DreamMachine
