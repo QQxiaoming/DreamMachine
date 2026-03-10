@@ -425,7 +425,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
                         color: "#4a6478"
-                        text: "Album source: " + viewModel.picturesDirUrl.toString()
+                        text: "Album source: " + viewModel.photoPickerDirUrl.toString()
                     }
 
                     Label {
@@ -601,7 +601,7 @@ ApplicationWindow {
         id: inputImageDialog
         title: viewModel.mobilePlatform ? "Select photos" : "Select input images"
         fileMode: FileDialog.OpenFiles
-        currentFolder: viewModel.mobilePlatform ? viewModel.picturesDirUrl : viewModel.outputDirUrl
+        currentFolder: viewModel.mobilePlatform ? viewModel.photoPickerDirUrl : viewModel.outputDirUrl
         nameFilters: ["Images (*.png *.jpg *.jpeg *.webp *.bmp)", "All files (*)"]
         onAccepted: {
             for (let i = 0; i < selectedFiles.length; ++i) {

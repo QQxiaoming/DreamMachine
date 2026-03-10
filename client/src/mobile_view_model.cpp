@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QRandomGenerator>
+#include <QStringList>
 #include <QStandardPaths>
 #include <QtConcurrent>
 
@@ -28,6 +29,21 @@ bool setStringIfChanged(QString &field, const QString &value)
     }
     field = value;
     return true;
+}
+
+QUrl locationStringToUrl(const QString &value)
+{
+    const QString trimmed = value.trimmed();
+    if (trimmed.isEmpty()) {
+        return QUrl();
+    }
+
+    const QUrl asUrl(trimmed);
+    if (asUrl.isValid() && !asUrl.scheme().isEmpty()) {
+        return asUrl;
+    }
+
+    return QUrl::fromLocalFile(trimmed);
 }
 
 } // namespace
@@ -155,6 +171,20 @@ QUrl MobileViewModel::picturesDirUrl() const
         return QUrl();
     }
     return QUrl::fromLocalFile(dirPath);
+}
+
+QUrl MobileViewModel::photoPickerDirUrl() const
+{
+#if defined(Q_OS_IOS)
+    const QStringList locations = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+    for (auto it = locations.crbegin(); it != locations.crend(); ++it) {
+        const QUrl candidate = locationStringToUrl(*it);
+        if (candidate.isValid() && !candidate.isEmpty()) {
+            return candidate;
+        }
+    }
+#endif
+    return picturesDirUrl();
 }
 
 QString MobileViewModel::seedText() const

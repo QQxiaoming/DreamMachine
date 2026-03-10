@@ -60,5 +60,11 @@
 
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>We need access to your documents folder to save files.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>DreamMachine needs access to your photos so you can select input images.</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>DreamMachine needs permission to save generated images to your photo library.</string>
 </dict>
 </plist>

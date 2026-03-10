@@ -185,6 +185,10 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
         XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS      "YES"
         XCODE_ATTRIBUTE_UIRequiresFullScreen                "YES"   # Add this line
     )
+
+    qt_import_plugins(${CMAKE_PROJECT_NAME}
+        INCLUDE Qt6::QIosOptionalPlugin_NSPhotoLibraryPlugin
+    )
 endif()
 
 ## Windows

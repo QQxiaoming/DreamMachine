@@ -27,6 +27,7 @@ class MobileViewModel : public QObject
     Q_PROPERTY(QUrl outputDirUrl READ outputDirUrl NOTIFY outputDirChanged)
     Q_PROPERTY(bool mobilePlatform READ mobilePlatform CONSTANT)
     Q_PROPERTY(QUrl picturesDirUrl READ picturesDirUrl CONSTANT)
+    Q_PROPERTY(QUrl photoPickerDirUrl READ photoPickerDirUrl CONSTANT)
 
     Q_PROPERTY(QString seedText READ seedText WRITE setSeedText NOTIFY seedTextChanged)
     Q_PROPERTY(int steps READ steps WRITE setSteps NOTIFY stepsChanged)
@@ -62,6 +63,7 @@ public:
     QUrl outputDirUrl() const;
     bool mobilePlatform() const;
     QUrl picturesDirUrl() const;
+    QUrl photoPickerDirUrl() const;
 
     QString seedText() const;
     int steps() const;
