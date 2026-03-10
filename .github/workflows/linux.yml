@@ -1,0 +1,68 @@
+name: linux
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-dev \
+            libxcb-xinerama0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-xkb1 \
+            libxkbcommon-x11-0 \
+            libxcb-shape0 \
+            ninja-build
+
+      - name: Install Qt linux
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.0'
+          modules: 'qtquick3dphysics qtquick3d qtquicktimeline'
+          aqtversion: ==3.1.18
+          target: desktop
+          host: linux
+
+      - name: Build all
+        shell: bash -l {0}
+        env:
+          QT_PATH: /home/runner/work/DreamMachine/Qt/6.8.0/gcc_64
+        run: |
+          cd client
+          ${{env.QT_PATH}}/bin/qt-cmake --version
+          ${{env.QT_PATH}}/bin/qt-cmake -B build/ -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/
+          cp ./build/DreamMachine ../
+
+      - name: Upload build asserts
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            DreamMachine

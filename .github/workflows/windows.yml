@@ -1,0 +1,52 @@
+name: windows
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'doc/**'
+      - 'README.md'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Qt windows
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.0'
+          modules: 'qtquick3dphysics qtquick3d qtquicktimeline'
+          aqtversion: ==3.1.18
+          target: desktop
+          host: windows
+          arch: win64_msvc2022_64
+
+      - name: Build all
+        shell: cmd
+        env:
+          QT_PATH: D:\a\DreamMachine\Qt\6.8.0\msvc2022_64
+        run: |
+          cd client
+          "%QT_PATH%\bin\qt-cmake" --version
+          "%QT_PATH%\bin\qt-cmake" -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --config Release
+          copy build\Release\DreamMachine.exe ..\
+
+      - name: Upload build asserts
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            DreamMachine.exe
