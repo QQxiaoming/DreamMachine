@@ -170,6 +170,9 @@ endif()
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
     set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        MACOSX_BUNDLE TRUE
+    )
 endif()
 
 ## iOS
