@@ -291,6 +291,7 @@ Item {
                 text: "\u2193"
                 font.pixelSize: 20
                 enabled: !viewModel.running && viewModel.canSaveImage
+                            && page.generatedImageUrl.length > 0
                 ToolTip.visible: hovered
                 ToolTip.text: viewModel.mobilePlatform ? "Save to album" : "Save image"
                 onClicked: {
