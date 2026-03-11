@@ -189,7 +189,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/platform/ios/Info.plist"
         # New Xcode attributes (???)
-        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER           "com.example.rplayer"
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER           "com.example.dreammachine"
         XCODE_ATTRIBUTE_PRODUCT_NAME                        ${CMAKE_PROJECT_NAME}
         XCODE_ATTRIBUTE_CURRENT_PROJECT_VERSION             ${CMAKE_PROJECT_VERSION}
         XCODE_ATTRIBUTE_MARKETING_VERSION                   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
