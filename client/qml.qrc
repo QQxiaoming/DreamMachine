@@ -8,6 +8,7 @@
         <file alias="components/DMTextField.qml">qml/components/DMTextField.qml</file>
         <file alias="components/DMTextArea.qml">qml/components/DMTextArea.qml</file>
         <file alias="components/DMSpinBox.qml">qml/components/DMSpinBox.qml</file>
+        <file alias="components/DMComboBox.qml">qml/components/DMComboBox.qml</file>
         <file alias="components/DMSlider.qml">qml/components/DMSlider.qml</file>
         <file alias="components/DMMainChrome.qml">qml/components/DMMainChrome.qml</file>
         <file alias="components/DMPreviewChrome.qml">qml/components/DMPreviewChrome.qml</file>

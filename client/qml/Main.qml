@@ -210,29 +210,40 @@ ApplicationWindow {
                     anchors.margins: 10
                     spacing: 8
 
-                    Label {
-                        text: "Theme"
-                        font.bold: true
-                        color: mainChrome.drawerTitleText
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        Label {
+                            text: "Theme"
+                            font.bold: true
+                            color: mainChrome.drawerTitleText
+                        }
+
+                        Item {
+                            Layout.fillWidth: true
+                        }
+
+                        Label {
+                            text: shell.availableThemes.length + " themes"
+                            font.pixelSize: 11
+                            color: mainChrome.drawerSubtitleText
+                        }
                     }
 
-                    GridLayout {
+                    DMComboBox {
+                        id: themeSelector
                         Layout.fillWidth: true
-                        columns: 2
-                        columnSpacing: 8
-                        rowSpacing: 8
+                        enabled: !shell.switchingMode && shell.availableThemes.length > 0
+                        model: shell.availableThemes
+                        currentIndex: shell.availableThemes.indexOf(shell.dmThemeName)
 
-                        Repeater {
-                            model: shell.availableThemes
+                        displayText: currentIndex >= 0
+                                     ? shell.themeDisplayName(shell.availableThemes[currentIndex])
+                                     : "No themes"
 
-                            delegate: DMButton {
-                                required property string modelData
-                                Layout.fillWidth: true
-                                compact: true
-                                text: shell.themeDisplayName(modelData)
-                                primary: shell.dmThemeName === modelData
-                                enabled: !shell.switchingMode
-                                onClicked: shell.dmThemeName = modelData
+                        onActivated: {
+                            if (currentIndex >= 0 && currentIndex < shell.availableThemes.length) {
+                                shell.dmThemeName = shell.availableThemes[currentIndex]
                             }
                         }
                     }
