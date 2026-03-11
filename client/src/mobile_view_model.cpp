@@ -959,6 +959,7 @@ void MobileViewModel::loadPresetFromUrl(const QUrl &url)
 
     GlobalSetting settings;
     settings.setValue("Global/presetPath", QFileInfo(filePath).absolutePath());
+    settings.setValue("Global/lastLoadedPresetFilePath", QFileInfo(filePath).absoluteFilePath());
 
     if (setStringIfChanged(m_lastError, QString())) {
         emit lastErrorChanged();
@@ -1298,6 +1299,12 @@ bool MobileViewModel::applyPresetObject(const QJsonObject &preset, QString &erro
 QString MobileViewModel::defaultPresetFilePath() const
 {
     GlobalSetting settings;
+    const QString lastLoadedFile =
+        settings.value("Global/lastLoadedPresetFilePath", QString()).toString().trimmed();
+    if (!lastLoadedFile.isEmpty()) {
+        return QFileInfo(lastLoadedFile).absoluteFilePath();
+    }
+
     const QString lastPath = settings.value("Global/presetPath", QDir::current().absolutePath()).toString();
     return QDir(lastPath).absoluteFilePath("dreammachine_preset.json");
 }

@@ -97,7 +97,7 @@ void saveImageBytesToPhotoLibraryAsync(
     const QByteArray imageBytesCopy = imageBytes;
     const auto callbackCopy = std::move(callback);
 
-    auto deliverResult = [callbackCopy](const IosPhotoLibrarySaveResult &result) {
+    auto deliverResult = [callbackCopy](IosPhotoLibrarySaveResult result) {
         dispatch_async(dispatch_get_main_queue(), ^{
             callbackCopy(result);
         });
@@ -128,7 +128,10 @@ void saveImageBytesToPhotoLibraryAsync(
                     [request addResourceWithType:PHAssetResourceTypePhoto data:imageData options:nil];
                     PHObjectPlaceholder *placeholder = request.placeholderForCreatedAsset;
                     if (placeholder != nil) {
-                        localIdentifier = placeholder.localIdentifier;
+                        NSString *identifier = placeholder.localIdentifier;
+                        if (identifier != nil) {
+                            localIdentifier = [identifier copy];
+                        }
                     }
                 } completionHandler:^(BOOL success, NSError * _Nullable error) {
                     IosPhotoLibrarySaveResult result;
@@ -141,7 +144,9 @@ void saveImageBytesToPhotoLibraryAsync(
                         }
                     } else {
                         result.ok = true;
-                        result.assetLocalIdentifier = nsStringToQString(localIdentifier);
+                        if (localIdentifier != nil) {
+                            result.assetLocalIdentifier = nsStringToQString(localIdentifier);
+                        }
                     }
                     if (!result.ok && result.error.isEmpty()) {
                         result.error = QString("Failed to save image to iOS Photos: %1")
