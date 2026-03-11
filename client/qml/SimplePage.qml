@@ -32,8 +32,8 @@ Item {
             Layout.fillWidth: true
             implicitHeight: statusContent.implicitHeight + 20
             radius: 14
-            color: "#ffffff"
-            border.color: "#dce7ee"
+            color: "#1a2533"
+            border.color: "#34495d"
 
             ColumnLayout {
                 id: statusContent
@@ -44,13 +44,13 @@ Item {
                 Label {
                     text: "Status: " + viewModel.statusText
                     font.bold: true
-                    color: "#1f3a4a"
+                    color: "#e3edf8"
                 }
 
                 Label {
                     Layout.fillWidth: true
                     wrapMode: Text.Wrap
-                    color: "#4a6478"
+                    color: "#9bb1c8"
                     text: "Select one input image. The app will run using your current Advanced mode parameters. Swipe left/right in preview to switch between Original and Generated."
                 }
 
@@ -58,7 +58,7 @@ Item {
                     visible: viewModel.lastError.length > 0
                     Layout.fillWidth: true
                     wrapMode: Text.Wrap
-                    color: "#b00020"
+                    color: "#ff7f90"
                     text: viewModel.lastError
                 }
             }
@@ -68,15 +68,15 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
             radius: 14
-            color: "#ffffff"
-            border.color: "#dce7ee"
+            color: "#1a2533"
+            border.color: "#34495d"
 
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 10
                 radius: 10
-                color: "#f8fbfd"
-                border.color: "#dce7ee"
+                color: "#121b26"
+                border.color: "#34495d"
 
                 SwipeView {
                     id: previewSwipe
@@ -96,8 +96,8 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                color: "#f2f8fd"
-                                border.color: "#cfe0ec"
+                                color: "#273a4d"
+                                border.color: "#425971"
                                 implicitWidth: originalBadgeLabel.implicitWidth + 14
                                 implicitHeight: originalBadgeLabel.implicitHeight + 6
 
@@ -105,7 +105,7 @@ Item {
                                     id: originalBadgeLabel
                                     anchors.centerIn: parent
                                     text: "Original"
-                                    color: "#1f3a4a"
+                                    color: "#e3edf8"
                                     font.bold: true
                                 }
                             }
@@ -134,7 +134,7 @@ Item {
                             Label {
                                 anchors.centerIn: parent
                                 text: "No original image selected"
-                                color: "#6a8294"
+                                color: "#8ea5bb"
                                 visible: page.originalImageUrl.length === 0
                             }
 
@@ -158,8 +158,8 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                color: "#f2f8fd"
-                                border.color: "#cfe0ec"
+                                color: "#273a4d"
+                                border.color: "#425971"
                                 implicitWidth: generatedBadgeLabel.implicitWidth + 14
                                 implicitHeight: generatedBadgeLabel.implicitHeight + 6
 
@@ -167,7 +167,7 @@ Item {
                                     id: generatedBadgeLabel
                                     anchors.centerIn: parent
                                     text: "Generated"
-                                    color: "#1f3a4a"
+                                    color: "#e3edf8"
                                     font.bold: true
                                 }
                             }
@@ -198,7 +198,7 @@ Item {
                                 text: viewModel.running && page.waitingResult
                                       ? "Generating..."
                                       : "No generated image yet"
-                                color: "#6a8294"
+                                color: "#8ea5bb"
                                 visible: page.generatedImageUrl.length === 0
                             }
 
@@ -227,7 +227,7 @@ Item {
                     anchors.bottomMargin: 28
                     horizontalAlignment: Text.AlignHCenter
                     text: "Swipe left/right to switch, tap image for fullscreen"
-                    color: "#6a8294"
+                    color: "#8ea5bb"
                     font.pixelSize: 12
                 }
 
@@ -243,7 +243,7 @@ Item {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.margins: 8
-                    color: "#b00020"
+                    color: "#ff7f90"
                     wrapMode: Text.Wrap
                     visible: page.currentPreviewError.length > 0
                     text: page.currentPreviewError
@@ -353,7 +353,7 @@ Item {
         anchors.fill: parent
         visible: page.previewFullscreen
         z: 1000
-        color: "#e6000000"
+        color: "#cc000000"
 
         onVisibleChanged: {
             if (visible) {
@@ -391,7 +391,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
-            color: "#ffffff"
+            color: "#e6eef8"
             text: "Pinch to zoom, tap image to exit fullscreen"
             visible: page.currentPreviewUrl.length > 0
         }

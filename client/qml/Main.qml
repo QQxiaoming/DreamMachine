@@ -25,19 +25,24 @@ ApplicationWindow {
         modeSwitchAnimation.start()
     }
 
-    Material.theme: Material.Light
+    Material.theme: Material.Dark
     Material.accent: Material.Teal
     Material.primary: Material.BlueGrey
 
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#f4f8fb" }
-            GradientStop { position: 1.0; color: "#eef5f1" }
+            GradientStop { position: 0.0; color: "#0f1520" }
+            GradientStop { position: 1.0; color: "#111b28" }
         }
     }
 
     header: ToolBar {
+        background: Rectangle {
+            color: "#162231"
+            border.color: "#2d4258"
+        }
+
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 10
@@ -57,24 +62,24 @@ ApplicationWindow {
 
                 background: Rectangle {
                     radius: 12
-                    color: menuButton.down ? "#d5e8f7" : "#eaf3fb"
-                    border.color: "#c9ddec"
+                    color: menuButton.down ? "#35506a" : "#2a4054"
+                    border.color: "#4a6278"
                 }
             }
 
             Label {
-                text: shell.currentMode === "simple" ? "DreamMachine Simple" : "DreamMachine Advanced"
+                text: "DreamMachine"
                 font.pixelSize: 19
                 font.bold: true
-                color: "#17354a"
+                color: "#b7c7d9"
             }
 
             Item { Layout.fillWidth: true }
 
             Rectangle {
                 radius: 10
-                color: viewModel.running ? "#d8f2e2" : "#e9eef3"
-                border.color: viewModel.running ? "#9bd0ae" : "#cfdbe6"
+                color: viewModel.running ? "#1f4e3c" : "#253445"
+                border.color: viewModel.running ? "#3f8163" : "#45607a"
                 implicitHeight: 30
                 implicitWidth: statusText.implicitWidth + 18
 
@@ -83,15 +88,8 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     text: viewModel.running ? "Running" : "Ready"
                     font.pixelSize: 13
-                    color: "#2f4f63"
+                    color: "#d4e1ef"
                 }
-            }
-
-            Button {
-                visible: shell.currentMode === "advanced"
-                text: viewModel.running ? "Running" : "Run"
-                enabled: !viewModel.running && !shell.switchingMode
-                onClicked: viewModel.runInference()
             }
         }
     }
@@ -105,10 +103,10 @@ ApplicationWindow {
 
         background: Rectangle {
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#f9fcff" }
-                GradientStop { position: 1.0; color: "#f2f8fd" }
+                GradientStop { position: 0.0; color: "#111c2b" }
+                GradientStop { position: 1.0; color: "#0f1724" }
             }
-            border.color: "#d4e2ee"
+            border.color: "#2e4358"
         }
 
         ColumnLayout {
@@ -119,8 +117,8 @@ ApplicationWindow {
             Rectangle {
                 Layout.fillWidth: true
                 radius: 12
-                color: "#ffffff"
-                border.color: "#d7e4ef"
+                color: "#1b2938"
+                border.color: "#334b62"
                 implicitHeight: 72
 
                 Column {
@@ -131,12 +129,12 @@ ApplicationWindow {
                     Label {
                         text: "Interface Mode"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     Label {
                         text: "Choose Simple or Advanced"
-                        color: "#4a6478"
+                        color: "#9bb1c8"
                         font.pixelSize: 12
                     }
                 }

@@ -13,6 +13,7 @@ Item {
     ScrollView {
         anchors.fill: parent
         anchors.topMargin: 8
+        anchors.bottomMargin: 84
         clip: true
 
         ColumnLayout {
@@ -25,8 +26,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: statusCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: statusCardContent
@@ -37,13 +38,13 @@ Item {
                     Label {
                         text: "Status: " + viewModel.statusText
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     Label {
                         visible: viewModel.lastError.length > 0
                         text: viewModel.lastError
-                        color: "#b00020"
+                        color: "#ff7f90"
                         wrapMode: Text.Wrap
                     }
                 }
@@ -55,8 +56,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: promptCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: promptCardContent
@@ -67,7 +68,7 @@ Item {
                     Label {
                         text: "Prompt"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     TextArea {
@@ -81,7 +82,7 @@ Item {
 
                     Label {
                         text: "Negative Prompt"
-                        color: "#4a6478"
+                        color: "#9bb1c8"
                     }
 
                     TextArea {
@@ -101,8 +102,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: inputCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: inputCardContent
@@ -116,14 +117,14 @@ Item {
                         Label {
                             text: "Input Images"
                             font.bold: true
-                            color: "#1f3a4a"
+                            color: "#e3edf8"
                         }
 
                         Item { Layout.fillWidth: true }
 
                         Label {
                             text: viewModel.inputImages.length + "/4"
-                            color: "#4a6478"
+                            color: "#9bb1c8"
                         }
                     }
 
@@ -152,8 +153,8 @@ Item {
 
                             Layout.fillWidth: true
                             radius: 10
-                            color: "#f7fbff"
-                            border.color: "#d9e7f2"
+                            color: "#1f2c3b"
+                            border.color: "#395068"
                             implicitHeight: row.implicitHeight + 10
 
                             RowLayout {
@@ -166,7 +167,7 @@ Item {
                                     Layout.fillWidth: true
                                     text: modelData
                                     elide: Text.ElideMiddle
-                                    color: "#2c3e50"
+                                    color: "#d6e3f3"
                                 }
 
                                 ToolButton {
@@ -186,8 +187,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: settingsCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: settingsCardContent
@@ -198,7 +199,7 @@ Item {
                     Label {
                         text: "Generation Settings"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     RowLayout {
@@ -207,7 +208,7 @@ Item {
 
                         Label {
                             text: "Width"
-                            color: "#4a6478"
+                            color: "#9bb1c8"
                         }
 
                         SpinBox {
@@ -221,7 +222,7 @@ Item {
 
                         Label {
                             text: "Height"
-                            color: "#4a6478"
+                            color: "#9bb1c8"
                         }
 
                         SpinBox {
@@ -238,7 +239,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Seed"; color: "#4a6478" }
+                        Label { text: "Seed"; color: "#9bb1c8" }
 
                         TextField {
                             Layout.fillWidth: true
@@ -254,7 +255,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Steps"; color: "#4a6478" }
+                        Label { text: "Steps"; color: "#9bb1c8" }
 
                         SpinBox {
                             from: 1
@@ -267,7 +268,7 @@ Item {
 
                         Label {
                             text: "CFG"
-                            color: "#4a6478"
+                            color: "#9bb1c8"
                         }
 
                         Slider {
@@ -283,7 +284,7 @@ Item {
 
                         Label {
                             text: Number(viewModel.cfg).toFixed(1)
-                            color: "#2c3e50"
+                            color: "#d6e3f3"
                         }
                     }
 
@@ -293,7 +294,7 @@ Item {
 
                         Label {
                             text: "Denoise"
-                            color: "#4a6478"
+                            color: "#9bb1c8"
                         }
 
                         Slider {
@@ -309,7 +310,7 @@ Item {
 
                         Label {
                             text: Number(viewModel.denoise).toFixed(2)
-                            color: "#2c3e50"
+                            color: "#d6e3f3"
                         }
                     }
 
@@ -317,7 +318,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Sampler"; color: "#4a6478" }
+                        Label { text: "Sampler"; color: "#9bb1c8" }
                         TextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -330,7 +331,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Scheduler"; color: "#4a6478" }
+                        Label { text: "Scheduler"; color: "#9bb1c8" }
                         TextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -347,8 +348,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: outputCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: outputCardContent
@@ -359,7 +360,7 @@ Item {
                     Label {
                         text: "Output + Server"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     RowLayout {
@@ -385,7 +386,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#4a6478"
+                        color: "#9bb1c8"
                         text: "Album source: " + viewModel.photoPickerDirUrl.toString()
                     }
 
@@ -393,7 +394,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#4a6478"
+                        color: "#9bb1c8"
                         text: "Save path: " + viewModel.picturesDirUrl.toString() + "/DreamMachine"
                     }
 
@@ -401,7 +402,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Host"; color: "#4a6478" }
+                        Label { text: "Host"; color: "#9bb1c8" }
                         TextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -409,7 +410,7 @@ Item {
                             onTextChanged: viewModel.host = text
                         }
 
-                        Label { text: "Port"; color: "#4a6478" }
+                        Label { text: "Port"; color: "#9bb1c8" }
                         SpinBox {
                             from: 1
                             to: 65535
@@ -457,8 +458,8 @@ Item {
                 Layout.rightMargin: 12
                 implicitHeight: previewCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: previewCardContent
@@ -469,15 +470,15 @@ Item {
                     Label {
                         text: "Preview"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 260
                         radius: 10
-                        color: "#f8fbfd"
-                        border.color: "#dce7ee"
+                        color: "#121b26"
+                        border.color: "#34495d"
 
                         Image {
                             id: previewImage
@@ -500,7 +501,7 @@ Item {
                         Label {
                             anchors.centerIn: parent
                             text: "No preview yet"
-                            color: "#6a8294"
+                            color: "#8ea5bb"
                             visible: viewModel.previewImageUrl.length === 0
                         }
 
@@ -510,7 +511,7 @@ Item {
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             anchors.margins: 8
-                            color: "#b00020"
+                            color: "#ff7f90"
                             wrapMode: Text.Wrap
                             visible: text.length > 0
                         }
@@ -528,11 +529,11 @@ Item {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
-                Layout.bottomMargin: 24
+                Layout.bottomMargin: 8
                 implicitHeight: resultCardContent.implicitHeight + 24
                 radius: 14
-                color: "#ffffff"
-                border.color: "#dce7ee"
+                color: "#1a2533"
+                border.color: "#34495d"
 
                 ColumnLayout {
                     id: resultCardContent
@@ -543,7 +544,7 @@ Item {
                     Label {
                         text: "Result"
                         font.bold: true
-                        color: "#1f3a4a"
+                        color: "#e3edf8"
                     }
 
                     TextArea {
@@ -554,6 +555,32 @@ Item {
                         text: viewModel.resultText
                     }
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 12
+        anchors.rightMargin: 12
+        anchors.bottomMargin: 12
+        implicitHeight: runBarContent.implicitHeight + 20
+        radius: 14
+        color: "#1a2533"
+        border.color: "#34495d"
+
+        RowLayout {
+            id: runBarContent
+            anchors.fill: parent
+            anchors.margins: 10
+
+            Button {
+                Layout.fillWidth: true
+                text: viewModel.running ? "Running" : "Run"
+                enabled: !viewModel.running
+                onClicked: viewModel.runInference()
             }
         }
     }
@@ -599,7 +626,7 @@ Item {
         anchors.fill: parent
         visible: page.previewFullscreen
         z: 1000
-        color: "#e6000000"
+        color: "#cc000000"
 
         onVisibleChanged: {
             if (visible) {
@@ -637,7 +664,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
-            color: "#ffffff"
+            color: "#e6eef8"
             text: "Pinch to zoom, tap image to exit fullscreen"
             visible: viewModel.previewImageUrl.length > 0
         }
