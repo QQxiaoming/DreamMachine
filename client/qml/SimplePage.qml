@@ -7,11 +7,20 @@ Item {
     id: page
     anchors.fill: parent
 
-    property string displayImageUrl: ""
+    property string originalImageUrl: ""
+    property string generatedImageUrl: ""
     property bool waitingResult: false
     property bool previewFullscreen: false
     property real previewFullscreenScale: 1.0
     property real previewPinchStartScale: 1.0
+    property string originalPreviewError: ""
+    property string generatedPreviewError: ""
+    readonly property string currentPreviewUrl: previewSwipe.currentIndex === 0
+                                              ? originalImageUrl
+                                              : generatedImageUrl
+    readonly property string currentPreviewError: previewSwipe.currentIndex === 0
+                                                ? originalPreviewError
+                                                : generatedPreviewError
 
     ColumnLayout {
         anchors.fill: parent
@@ -42,7 +51,7 @@ Item {
                     Layout.fillWidth: true
                     wrapMode: Text.Wrap
                     color: "#4a6478"
-                    text: "Select one input image. The app will automatically run using your current Advanced mode parameters, then replace this preview with the generated output."
+                    text: "Select one input image. The app will run using your current Advanced mode parameters. Swipe left/right in preview to switch between Original and Generated."
                 }
 
                 Label {
@@ -69,29 +78,157 @@ Item {
                 color: "#f8fbfd"
                 border.color: "#dce7ee"
 
-                Image {
+                SwipeView {
+                    id: previewSwipe
                     anchors.fill: parent
                     anchors.margins: 8
-                    cache: false
-                    smooth: true
-                    fillMode: Image.PreserveAspectFit
-                    source: page.displayImageUrl
-                    visible: page.displayImageUrl.length > 0
+                    interactive: true
+                    clip: true
 
-                    onStatusChanged: {
-                        if (status === Image.Error) {
-                            previewErrorLabel.text = "Preview load failed: " + source
-                        } else if (status === Image.Ready) {
-                            previewErrorLabel.text = ""
+                    Item {
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+
+                            Rectangle {
+                                z: 3
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.margins: 8
+                                radius: 8
+                                color: "#f2f8fd"
+                                border.color: "#cfe0ec"
+                                implicitWidth: originalBadgeLabel.implicitWidth + 14
+                                implicitHeight: originalBadgeLabel.implicitHeight + 6
+
+                                Label {
+                                    id: originalBadgeLabel
+                                    anchors.centerIn: parent
+                                    text: "Original"
+                                    color: "#1f3a4a"
+                                    font.bold: true
+                                }
+                            }
+
+                            Image {
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
+                                anchors.bottomMargin: 12
+                                anchors.topMargin: 38
+                                cache: false
+                                smooth: true
+                                fillMode: Image.PreserveAspectFit
+                                source: page.originalImageUrl
+                                visible: page.originalImageUrl.length > 0
+
+                                onStatusChanged: {
+                                    if (status === Image.Error) {
+                                        page.originalPreviewError = "Original preview load failed: " + source
+                                    } else if (status === Image.Ready) {
+                                        page.originalPreviewError = ""
+                                    }
+                                }
+                            }
+
+                            Label {
+                                anchors.centerIn: parent
+                                text: "No original image selected"
+                                color: "#6a8294"
+                                visible: page.originalImageUrl.length === 0
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: page.originalImageUrl.length > 0
+                                preventStealing: false
+                                onClicked: page.previewFullscreen = true
+                            }
+                        }
+                    }
+
+                    Item {
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "transparent"
+
+                            Rectangle {
+                                z: 3
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.margins: 8
+                                radius: 8
+                                color: "#f2f8fd"
+                                border.color: "#cfe0ec"
+                                implicitWidth: generatedBadgeLabel.implicitWidth + 14
+                                implicitHeight: generatedBadgeLabel.implicitHeight + 6
+
+                                Label {
+                                    id: generatedBadgeLabel
+                                    anchors.centerIn: parent
+                                    text: "Generated"
+                                    color: "#1f3a4a"
+                                    font.bold: true
+                                }
+                            }
+
+                            Image {
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
+                                anchors.bottomMargin: 12
+                                anchors.topMargin: 38
+                                cache: false
+                                smooth: true
+                                fillMode: Image.PreserveAspectFit
+                                source: page.generatedImageUrl
+                                visible: page.generatedImageUrl.length > 0
+
+                                onStatusChanged: {
+                                    if (status === Image.Error) {
+                                        page.generatedPreviewError = "Generated preview load failed: " + source
+                                    } else if (status === Image.Ready) {
+                                        page.generatedPreviewError = ""
+                                    }
+                                }
+                            }
+
+                            Label {
+                                anchors.centerIn: parent
+                                text: viewModel.running && page.waitingResult
+                                      ? "Generating..."
+                                      : "No generated image yet"
+                                color: "#6a8294"
+                                visible: page.generatedImageUrl.length === 0
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: page.generatedImageUrl.length > 0
+                                preventStealing: false
+                                onClicked: page.previewFullscreen = true
+                            }
                         }
                     }
                 }
 
+                PageIndicator {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 8
+                    count: 2
+                    currentIndex: previewSwipe.currentIndex
+                }
+
                 Label {
-                    anchors.centerIn: parent
-                    text: "No image selected"
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 28
+                    horizontalAlignment: Text.AlignHCenter
+                    text: "Swipe left/right to switch, tap image for fullscreen"
                     color: "#6a8294"
-                    visible: page.displayImageUrl.length === 0
+                    font.pixelSize: 12
                 }
 
                 BusyIndicator {
@@ -108,14 +245,10 @@ Item {
                     anchors.margins: 8
                     color: "#b00020"
                     wrapMode: Text.Wrap
-                    visible: text.length > 0
+                    visible: page.currentPreviewError.length > 0
+                    text: page.currentPreviewError
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    enabled: page.displayImageUrl.length > 0
-                    onClicked: page.previewFullscreen = true
-                }
             }
         }
 
@@ -124,7 +257,7 @@ Item {
             spacing: 8
 
             Button {
-                text: page.displayImageUrl.length > 0
+                text: page.originalImageUrl.length > 0
                       ? "Replace Image"
                       : (viewModel.mobilePlatform ? "Choose From Album" : "Choose Image")
                 enabled: !viewModel.running
@@ -133,11 +266,15 @@ Item {
 
             Button {
                 text: "Clear"
-                enabled: !viewModel.running && page.displayImageUrl.length > 0
+                enabled: !viewModel.running
+                         && (page.originalImageUrl.length > 0 || page.generatedImageUrl.length > 0)
                 onClicked: {
-                    page.displayImageUrl = ""
+                    page.originalImageUrl = ""
+                    page.generatedImageUrl = ""
                     page.waitingResult = false
-                    previewErrorLabel.text = ""
+                    page.originalPreviewError = ""
+                    page.generatedPreviewError = ""
+                    previewSwipe.currentIndex = 0
                     viewModel.clearInputImages()
                 }
             }
@@ -161,7 +298,8 @@ Item {
 
         function onPreviewImageUrlChanged() {
             if (page.waitingResult && viewModel.previewImageUrl.length > 0) {
-                page.displayImageUrl = viewModel.previewImageUrl
+                page.generatedImageUrl = viewModel.previewImageUrl
+                page.generatedPreviewError = ""
                 page.waitingResult = false
             }
         }
@@ -193,9 +331,12 @@ Item {
                 return
             }
 
-            page.displayImageUrl = chosen.toString()
+            page.originalImageUrl = chosen.toString()
+            page.generatedImageUrl = ""
             page.waitingResult = false
-            previewErrorLabel.text = ""
+            page.originalPreviewError = ""
+            page.generatedPreviewError = ""
+            previewSwipe.currentIndex = 0
 
             viewModel.clearInputImages()
             const added = viewModel.addInputImageUrl(chosen)
@@ -227,14 +368,14 @@ Item {
             cache: false
             smooth: true
             fillMode: Image.PreserveAspectFit
-            source: page.displayImageUrl
-            visible: page.displayImageUrl.length > 0
+            source: page.currentPreviewUrl
+            visible: page.currentPreviewUrl.length > 0
             scale: page.previewFullscreenScale
         }
 
         PinchArea {
             anchors.fill: parent
-            enabled: page.displayImageUrl.length > 0
+            enabled: page.currentPreviewUrl.length > 0
 
             onPinchStarted: {
                 page.previewPinchStartScale = page.previewFullscreenScale
@@ -252,7 +393,7 @@ Item {
             anchors.bottomMargin: 24
             color: "#ffffff"
             text: "Pinch to zoom, tap image to exit fullscreen"
-            visible: page.displayImageUrl.length > 0
+            visible: page.currentPreviewUrl.length > 0
         }
 
         TapHandler {
