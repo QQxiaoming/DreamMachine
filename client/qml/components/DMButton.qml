@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "DMTheme.js" as DMTheme
 
 Button {
     id: control
@@ -33,7 +34,7 @@ Button {
         text: control.text
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        color: "#f2f7fd"
+        color: DMTheme.color("buttonText")
         font: control.font
         elide: Text.ElideRight
     }
@@ -42,34 +43,16 @@ Button {
         id: bg
         radius: control.compact ? 11 : 13
         border.width: 1
-        border.color: !control.enabled
-                      ? "#44617a"
-                      : control.primary
-                        ? (control.down ? "#66f8d2" : "#4be8c1")
-                        : control.danger
-                          ? (control.down ? "#ff8a96" : "#ff6e7d")
-                          : (control.down ? "#6c88a3" : "#56748f")
+                border.color: DMTheme.buttonBorder(control.enabled, control.primary, control.danger, control.down)
 
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                color: !control.enabled
-                       ? "#2f4356"
-                       : control.primary
-                         ? (control.down ? "#117b69" : "#15927d")
-                         : control.danger
-                           ? (control.down ? "#8e2f40" : "#a6384c")
-                           : (control.down ? "#2d4962" : "#375875")
+                                color: DMTheme.buttonTop(control.enabled, control.primary, control.danger, control.down)
             }
             GradientStop {
                 position: 1.0
-                color: !control.enabled
-                       ? "#27394a"
-                       : control.primary
-                         ? (control.down ? "#0e6558" : "#127565")
-                         : control.danger
-                           ? (control.down ? "#772636" : "#8f3042")
-                           : (control.down ? "#273f56" : "#2f4c66")
+                                color: DMTheme.buttonBottom(control.enabled, control.primary, control.danger, control.down)
             }
         }
     }

@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import "components"
+import "components/DMTheme.js" as DMTheme
 
 ApplicationWindow {
     id: shell
@@ -15,6 +17,14 @@ ApplicationWindow {
     property string currentMode: viewModel.mobilePlatform ? "simple" : "advanced"
     property string pendingMode: currentMode
     property bool switchingMode: false
+    property string dmThemeName: "ocean"
+    property var availableThemes: DMTheme.themeNames()
+
+    onDmThemeNameChanged: DMTheme.setTheme(dmThemeName)
+
+    Component.onCompleted: {
+        DMTheme.setTheme(dmThemeName)
+    }
 
     function requestMode(mode) {
         if (switchingMode || mode === currentMode) {
@@ -25,6 +35,14 @@ ApplicationWindow {
         pendingMode = mode
         modeDrawer.close()
         modeSwitchAnimation.start()
+    }
+
+    function themeDisplayName(name) {
+        if (!name || name.length === 0) {
+            return ""
+        }
+
+        return name.charAt(0).toUpperCase() + name.slice(1)
     }
 
     Material.theme: Material.Dark
@@ -161,15 +179,13 @@ ApplicationWindow {
             border.color: "#3e617f"
         }
 
-        Column {
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
+        ColumnLayout {
+            anchors.fill: parent
             anchors.margins: 12
             spacing: 8
 
             DMCard {
-                width: parent.width
+                Layout.fillWidth: true
                 radius: 14
                 implicitHeight: 72
 
@@ -193,7 +209,7 @@ ApplicationWindow {
             }
 
             DMButton {
-                width: parent.width
+                Layout.fillWidth: true
                 text: "Simple"
                 primary: shell.currentMode === "simple"
                 enabled: !shell.switchingMode
@@ -201,11 +217,54 @@ ApplicationWindow {
             }
 
             DMButton {
-                width: parent.width
+                Layout.fillWidth: true
                 text: "Advanced"
                 primary: shell.currentMode === "advanced"
                 enabled: !shell.switchingMode
                 onClicked: shell.requestMode("advanced")
+            }
+
+            Item {
+                Layout.fillHeight: true
+            }
+
+            DMCard {
+                Layout.fillWidth: true
+                implicitHeight: themePanel.implicitHeight + 20
+
+                ColumnLayout {
+                    id: themePanel
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 8
+
+                    Label {
+                        text: "Theme"
+                        font.bold: true
+                        color: "#e3edf8"
+                    }
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: 2
+                        columnSpacing: 8
+                        rowSpacing: 8
+
+                        Repeater {
+                            model: shell.availableThemes
+
+                            delegate: DMButton {
+                                required property string modelData
+                                Layout.fillWidth: true
+                                compact: true
+                                text: shell.themeDisplayName(modelData)
+                                primary: shell.dmThemeName === modelData
+                                enabled: !shell.switchingMode
+                                onClicked: shell.dmThemeName = modelData
+                            }
+                        }
+                    }
+                }
             }
         }
     }

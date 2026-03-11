@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "DMTheme.js" as DMTheme
 
 Slider {
     id: control
@@ -17,10 +18,10 @@ Slider {
             anchors.fill: parent
             radius: height / 2
             border.width: 1
-            border.color: "#42617d"
+            border.color: DMTheme.color("sliderTrackBorder")
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#1b3145" }
-                GradientStop { position: 1.0; color: "#172b3d" }
+                GradientStop { position: 0.0; color: DMTheme.color("sliderTrackTop") }
+                GradientStop { position: 1.0; color: DMTheme.color("sliderTrackBottom") }
             }
         }
 
@@ -29,10 +30,10 @@ Slider {
             height: parent.height
             radius: height / 2
             border.width: 1
-            border.color: "#71e9c8"
+            border.color: DMTheme.color("sliderFillBorder")
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#179a83" }
-                GradientStop { position: 1.0; color: "#127966" }
+                GradientStop { position: 0.0; color: DMTheme.color("sliderFillTop") }
+                GradientStop { position: 1.0; color: DMTheme.color("sliderFillBottom") }
             }
         }
     }
@@ -44,15 +45,15 @@ Slider {
         height: 20
         radius: 10
         border.width: 1
-        border.color: control.pressed ? "#9ef6de" : "#6bd8bc"
+        border.color: DMTheme.sliderHandleBorder(control.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                color: control.pressed ? "#3ec6a8" : "#2fb695"
+                color: DMTheme.sliderHandleTop(control.pressed)
             }
             GradientStop {
                 position: 1.0
-                color: control.pressed ? "#2da286" : "#268d74"
+                color: DMTheme.sliderHandleBottom(control.pressed)
             }
         }
         scale: control.pressed ? 1.08 : 1.0

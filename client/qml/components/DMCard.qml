@@ -1,11 +1,12 @@
 import QtQuick
+import "DMTheme.js" as DMTheme
 
 Rectangle {
     id: card
 
-    property color toneTop: "#1a2c3e"
-    property color toneBottom: "#122030"
-    property color borderTone: "#31506a"
+    property color toneTop: DMTheme.color("cardToneTop")
+    property color toneBottom: DMTheme.color("cardToneBottom")
+    property color borderTone: DMTheme.color("cardBorder")
 
     radius: 18
     border.width: 1

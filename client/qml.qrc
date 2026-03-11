@@ -3,11 +3,12 @@
         <file alias="Main.qml">qml/Main.qml</file>
         <file alias="SimplePage.qml">qml/SimplePage.qml</file>
         <file alias="AdvancedPage.qml">qml/AdvancedPage.qml</file>
-        <file alias="DMCard.qml">qml/DMCard.qml</file>
-        <file alias="DMButton.qml">qml/DMButton.qml</file>
-        <file alias="DMTextField.qml">qml/DMTextField.qml</file>
-        <file alias="DMTextArea.qml">qml/DMTextArea.qml</file>
-        <file alias="DMSpinBox.qml">qml/DMSpinBox.qml</file>
-        <file alias="DMSlider.qml">qml/DMSlider.qml</file>
+        <file alias="components/DMCard.qml">qml/components/DMCard.qml</file>
+        <file alias="components/DMButton.qml">qml/components/DMButton.qml</file>
+        <file alias="components/DMTextField.qml">qml/components/DMTextField.qml</file>
+        <file alias="components/DMTextArea.qml">qml/components/DMTextArea.qml</file>
+        <file alias="components/DMSpinBox.qml">qml/components/DMSpinBox.qml</file>
+        <file alias="components/DMSlider.qml">qml/components/DMSlider.qml</file>
+        <file alias="components/DMTheme.js">qml/components/DMTheme.js</file>
     </qresource>
 </RCC>

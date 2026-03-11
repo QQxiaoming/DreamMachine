@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "DMTheme.js" as DMTheme
 
 SpinBox {
     id: control
@@ -25,9 +26,9 @@ SpinBox {
         anchors.bottomMargin: control.bottomPadding
         text: control.displayText
         font: control.font
-        color: control.enabled ? "#edf4fd" : "#9cb2c6"
-        selectionColor: "#2aa58a"
-        selectedTextColor: "#ffffff"
+        color: DMTheme.fieldText(control.enabled)
+        selectionColor: DMTheme.color("fieldSelection")
+        selectedTextColor: DMTheme.color("fieldSelectedText")
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
         readOnly: !control.editable
@@ -42,10 +43,10 @@ SpinBox {
     background: Rectangle {
         radius: 12
         border.width: control.activeFocus ? 2 : 1
-        border.color: control.activeFocus ? "#4fe3be" : "#3f5e79"
+        border.color: control.activeFocus ? DMTheme.color("fieldBorderFocus") : DMTheme.color("fieldBorder")
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#162838" }
-            GradientStop { position: 1.0; color: "#112131" }
+            GradientStop { position: 0.0; color: DMTheme.color("fieldBgTop") }
+            GradientStop { position: 1.0; color: DMTheme.color("fieldBgBottom") }
         }
     }
 
@@ -57,30 +58,22 @@ SpinBox {
         height: control.height - 8
         radius: 10
         border.width: 1
-        border.color: control.down.pressed ? "#6bb4e3" : "#4c789a"
+                border.color: DMTheme.spinIndicatorBorder(control.enabled, control.down.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                color: !control.enabled
-                       ? "#2f4356"
-                       : control.down.pressed
-                         ? "#2b5c7f"
-                         : "#35688d"
+                                color: DMTheme.spinIndicatorTop(control.enabled, control.down.pressed)
             }
             GradientStop {
                 position: 1.0
-                color: !control.enabled
-                       ? "#27394a"
-                       : control.down.pressed
-                         ? "#224b68"
-                         : "#2a5674"
+                                color: DMTheme.spinIndicatorBottom(control.enabled, control.down.pressed)
             }
         }
 
         Text {
             anchors.centerIn: parent
             text: "-"
-            color: "#eff6ff"
+            color: DMTheme.color("spinIndicatorText")
             font.pixelSize: 18
             font.bold: true
         }
@@ -94,30 +87,22 @@ SpinBox {
         height: control.height - 8
         radius: 10
         border.width: 1
-        border.color: control.up.pressed ? "#6bb4e3" : "#4c789a"
+                border.color: DMTheme.spinIndicatorBorder(control.enabled, control.up.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                color: !control.enabled
-                       ? "#2f4356"
-                       : control.up.pressed
-                         ? "#2b5c7f"
-                         : "#35688d"
+                                color: DMTheme.spinIndicatorTop(control.enabled, control.up.pressed)
             }
             GradientStop {
                 position: 1.0
-                color: !control.enabled
-                       ? "#27394a"
-                       : control.up.pressed
-                         ? "#224b68"
-                         : "#2a5674"
+                                color: DMTheme.spinIndicatorBottom(control.enabled, control.up.pressed)
             }
         }
 
         Text {
             anchors.centerIn: parent
             text: "+"
-            color: "#eff6ff"
+            color: DMTheme.color("spinIndicatorText")
             font.pixelSize: 17
             font.bold: true
         }
