@@ -49,47 +49,19 @@ ApplicationWindow {
     Material.accent: Material.Teal
     Material.primary: Material.BlueGrey
 
-    Rectangle {
+    DMMainChrome {
+        id: mainChrome
         anchors.fill: parent
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: "#0d1724" }
-            GradientStop { position: 0.48; color: "#101f2f" }
-            GradientStop { position: 1.0; color: "#11273c" }
-        }
-
-        Rectangle {
-            anchors.right: parent.right
-            anchors.top: parent.top
-            width: parent.width * 0.55
-            height: parent.height * 0.36
-            radius: width * 0.5
-            color: "#1d455f"
-            opacity: 0.2
-            transform: Rotation {
-                origin.x: width * 0.5
-                origin.y: height * 0.5
-                angle: -18
-            }
-        }
-
-        Rectangle {
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            width: parent.width * 0.6
-            height: parent.height * 0.26
-            radius: width * 0.5
-            color: "#0f7f67"
-            opacity: 0.12
-        }
+        themeName: shell.dmThemeName
     }
 
     header: ToolBar {
         background: Rectangle {
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#192e41" }
-                GradientStop { position: 1.0; color: "#132334" }
+                GradientStop { position: 0.0; color: mainChrome.headerTop }
+                GradientStop { position: 1.0; color: mainChrome.headerBottom }
             }
-            border.color: "#365470"
+            border.color: mainChrome.headerBorder
         }
 
         RowLayout {
@@ -111,15 +83,15 @@ ApplicationWindow {
 
                 background: Rectangle {
                     radius: 12
-                    border.color: menuButton.down ? "#7ec2ea" : "#5f89ab"
+                    border.color: menuButton.down ? mainChrome.menuButtonBorderDown : mainChrome.menuButtonBorder
                     gradient: Gradient {
                         GradientStop {
                             position: 0.0
-                            color: menuButton.down ? "#2f5f80" : "#3b6d90"
+                            color: menuButton.down ? mainChrome.menuButtonTopDown : mainChrome.menuButtonTop
                         }
                         GradientStop {
                             position: 1.0
-                            color: menuButton.down ? "#244c69" : "#2d5b7a"
+                            color: menuButton.down ? mainChrome.menuButtonBottomDown : mainChrome.menuButtonBottom
                         }
                     }
                 }
@@ -129,7 +101,7 @@ ApplicationWindow {
                 text: "DreamMachine"
                 font.pixelSize: 19
                 font.bold: true
-                color: "#d8e8f8"
+                color: mainChrome.titleText
             }
 
             Item { Layout.fillWidth: true }
@@ -139,14 +111,14 @@ ApplicationWindow {
                 gradient: Gradient {
                     GradientStop {
                         position: 0.0
-                        color: viewModel.running ? "#1f6650" : "#2b4b67"
+                        color: viewModel.running ? mainChrome.statusRunningTop : mainChrome.statusIdleTop
                     }
                     GradientStop {
                         position: 1.0
-                        color: viewModel.running ? "#165241" : "#233d54"
+                        color: viewModel.running ? mainChrome.statusRunningBottom : mainChrome.statusIdleBottom
                     }
                 }
-                border.color: viewModel.running ? "#66d3aa" : "#6ba7d1"
+                border.color: viewModel.running ? mainChrome.statusRunningBorder : mainChrome.statusIdleBorder
                 implicitHeight: 30
                 implicitWidth: statusText.implicitWidth + 18
 
@@ -155,7 +127,7 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     text: viewModel.running ? "Running" : "Ready"
                     font.pixelSize: 13
-                    color: "#edf5ff"
+                    color: mainChrome.statusText
                 }
             }
         }
@@ -168,15 +140,15 @@ ApplicationWindow {
         height: shell.height
         modal: true
         Overlay.modal: Rectangle {
-            color: "#b3000000"
+            color: mainChrome.drawerOverlay
         }
 
         background: Rectangle {
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#13263a" }
-                GradientStop { position: 1.0; color: "#0f1d2c" }
+                GradientStop { position: 0.0; color: mainChrome.drawerTop }
+                GradientStop { position: 1.0; color: mainChrome.drawerBottom }
             }
-            border.color: "#3e617f"
+            border.color: mainChrome.drawerBorder
         }
 
         ColumnLayout {
@@ -197,12 +169,12 @@ ApplicationWindow {
                     Label {
                         text: "Interface Mode"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: mainChrome.drawerTitleText
                     }
 
                     Label {
                         text: "Choose Simple or Advanced"
-                        color: "#b4cade"
+                        color: mainChrome.drawerSubtitleText
                         font.pixelSize: 12
                     }
                 }
@@ -241,7 +213,7 @@ ApplicationWindow {
                     Label {
                         text: "Theme"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: mainChrome.drawerTitleText
                     }
 
                     GridLayout {

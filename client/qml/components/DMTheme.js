@@ -61,7 +61,64 @@ var themes = {
         sliderHandleTop: "#2fb695",
         sliderHandleTopPressed: "#3ec6a8",
         sliderHandleBottom: "#268d74",
-        sliderHandleBottomPressed: "#2da286"
+        sliderHandleBottomPressed: "#2da286",
+
+        previewSurfaceBorder: "#3b5a76",
+        previewSurfaceTop: "#172938",
+        previewSurfaceBottom: "#132435",
+        previewBadgeBorder: "#67a7d4",
+        previewBadgeTop: "#2f5d7f",
+        previewBadgeBottom: "#274f6d",
+        previewBadgeText: "#e3edf8",
+        previewHintText: "#8ea5bb",
+        previewIndicatorActive: "#63ddbc",
+        previewIndicatorInactive: "#48637c",
+        previewErrorText: "#ff7f90",
+        previewFullscreenOverlay: "#cc000000",
+        previewFullscreenHint: "#e6eef8",
+
+        mainBgTop: "#0d1724",
+        mainBgMid: "#101f2f",
+        mainBgBottom: "#11273c",
+        mainBlobTopRight: "#331d455f",
+        mainBlobBottomLeft: "#1f0f7f67",
+
+        headerTop: "#192e41",
+        headerBottom: "#132334",
+        headerBorder: "#365470",
+
+        menuButtonBorder: "#5f89ab",
+        menuButtonBorderDown: "#7ec2ea",
+        menuButtonTop: "#3b6d90",
+        menuButtonTopDown: "#2f5f80",
+        menuButtonBottom: "#2d5b7a",
+        menuButtonBottomDown: "#244c69",
+
+        titleText: "#d8e8f8",
+
+        statusRunningTop: "#1f6650",
+        statusRunningBottom: "#165241",
+        statusRunningBorder: "#66d3aa",
+        statusIdleTop: "#2b4b67",
+        statusIdleBottom: "#233d54",
+        statusIdleBorder: "#6ba7d1",
+        statusText: "#edf5ff",
+
+        drawerTop: "#13263a",
+        drawerBottom: "#0f1d2c",
+        drawerBorder: "#3e617f",
+        drawerOverlay: "#b3000000",
+
+        textPrimary: "#f0f7ff",
+        textSecondary: "#b7cbde",
+        textError: "#ff7f90",
+        drawerTitleText: "#e3edf8",
+        drawerSubtitleText: "#b4cade",
+
+        listRowBorder: "#4a6b87",
+        listRowTop: "#21394d",
+        listRowBottom: "#1a2e40",
+        listRowText: "#e0edf9"
     },
 
     sunset: {
@@ -118,7 +175,64 @@ var themes = {
         sliderHandleTop: "#d39235",
         sliderHandleTopPressed: "#e2a74f",
         sliderHandleBottom: "#af7124",
-        sliderHandleBottomPressed: "#c38435"
+        sliderHandleBottomPressed: "#c38435",
+
+        previewSurfaceBorder: "#7f5a63",
+        previewSurfaceTop: "#3a2732",
+        previewSurfaceBottom: "#2d1f29",
+        previewBadgeBorder: "#d5a27c",
+        previewBadgeTop: "#8f6244",
+        previewBadgeBottom: "#754e36",
+        previewBadgeText: "#fff0e6",
+        previewHintText: "#c6a194",
+        previewIndicatorActive: "#ffd07a",
+        previewIndicatorInactive: "#7f6464",
+        previewErrorText: "#ff8f7c",
+        previewFullscreenOverlay: "#cc170f14",
+        previewFullscreenHint: "#ffece3",
+
+        mainBgTop: "#271920",
+        mainBgMid: "#33202a",
+        mainBgBottom: "#3a2430",
+        mainBlobTopRight: "#40ad6f40",
+        mainBlobBottomLeft: "#33e7b26a",
+
+        headerTop: "#4a2f3c",
+        headerBottom: "#392432",
+        headerBorder: "#8f5f74",
+
+        menuButtonBorder: "#c99772",
+        menuButtonBorderDown: "#e3b086",
+        menuButtonTop: "#8f6045",
+        menuButtonTopDown: "#7a4f37",
+        menuButtonBottom: "#754a36",
+        menuButtonBottomDown: "#643f2f",
+
+        titleText: "#ffe9df",
+
+        statusRunningTop: "#87692e",
+        statusRunningBottom: "#6e5626",
+        statusRunningBorder: "#ffd07a",
+        statusIdleTop: "#654a5d",
+        statusIdleBottom: "#543d4e",
+        statusIdleBorder: "#d09eb8",
+        statusText: "#fff3ea",
+
+        drawerTop: "#3f2835",
+        drawerBottom: "#311f2a",
+        drawerBorder: "#81556a",
+        drawerOverlay: "#b3120c10",
+
+        textPrimary: "#fff3ea",
+        textSecondary: "#d8b7aa",
+        textError: "#ff8f7c",
+        drawerTitleText: "#ffe9df",
+        drawerSubtitleText: "#d7b3a5",
+
+        listRowBorder: "#8e6b63",
+        listRowTop: "#533540",
+        listRowBottom: "#422b35",
+        listRowText: "#fff0e6"
     },
 
     forest: {
@@ -175,7 +289,64 @@ var themes = {
         sliderHandleTop: "#38b182",
         sliderHandleTopPressed: "#4ac293",
         sliderHandleBottom: "#2a8c68",
-        sliderHandleBottomPressed: "#39a47d"
+        sliderHandleBottomPressed: "#39a47d",
+
+        previewSurfaceBorder: "#4b7561",
+        previewSurfaceTop: "#1f3a2d",
+        previewSurfaceBottom: "#183126",
+        previewBadgeBorder: "#8bc9ad",
+        previewBadgeTop: "#3d694f",
+        previewBadgeBottom: "#31553f",
+        previewBadgeText: "#edfff3",
+        previewHintText: "#9cc2b0",
+        previewIndicatorActive: "#8de5bb",
+        previewIndicatorInactive: "#4a6d5c",
+        previewErrorText: "#f09a90",
+        previewFullscreenOverlay: "#cc0e1713",
+        previewFullscreenHint: "#edfff3",
+
+        mainBgTop: "#14271e",
+        mainBgMid: "#1a3126",
+        mainBgBottom: "#1f3b2d",
+        mainBlobTopRight: "#333f8d6f",
+        mainBlobBottomLeft: "#2f2fb07d",
+
+        headerTop: "#1f3a2d",
+        headerBottom: "#182d23",
+        headerBorder: "#4f826d",
+
+        menuButtonBorder: "#6f9d87",
+        menuButtonBorderDown: "#8fc6aa",
+        menuButtonTop: "#446f5a",
+        menuButtonTopDown: "#395f4d",
+        menuButtonBottom: "#345844",
+        menuButtonBottomDown: "#2b4b3a",
+
+        titleText: "#e8fff1",
+
+        statusRunningTop: "#2b805d",
+        statusRunningBottom: "#23694e",
+        statusRunningBorder: "#8de5bb",
+        statusIdleTop: "#365b4a",
+        statusIdleBottom: "#2d4d3f",
+        statusIdleBorder: "#7fb69d",
+        statusText: "#edfff3",
+
+        drawerTop: "#1d3529",
+        drawerBottom: "#172b22",
+        drawerBorder: "#4a7a65",
+        drawerOverlay: "#b20b1511",
+
+        textPrimary: "#edfff3",
+        textSecondary: "#a8cab9",
+        textError: "#f09a90",
+        drawerTitleText: "#e8fff1",
+        drawerSubtitleText: "#b9d7c8",
+
+        listRowBorder: "#5e8a73",
+        listRowTop: "#2a4738",
+        listRowBottom: "#223b2f",
+        listRowText: "#e8fff1"
     },
 
     graphite: {
@@ -237,7 +408,64 @@ var themes = {
         sliderHandleTop: "#5e88d6",
         sliderHandleTopPressed: "#719be5",
         sliderHandleBottom: "#4b74bc",
-        sliderHandleBottomPressed: "#5f86d0"
+        sliderHandleBottomPressed: "#5f86d0",
+
+        previewSurfaceBorder: "#667285",
+        previewSurfaceTop: "#303846",
+        previewSurfaceBottom: "#2a313e",
+        previewBadgeBorder: "#99b1d7",
+        previewBadgeTop: "#516076",
+        previewBadgeBottom: "#465467",
+        previewBadgeText: "#edf2fb",
+        previewHintText: "#a9b3c4",
+        previewIndicatorActive: "#8db8ff",
+        previewIndicatorInactive: "#5a6372",
+        previewErrorText: "#ff9eac",
+        previewFullscreenOverlay: "#cc12151b",
+        previewFullscreenHint: "#f3f7ff",
+
+        mainBgTop: "#1b2028",
+        mainBgMid: "#242a34",
+        mainBgBottom: "#2a313d",
+        mainBlobTopRight: "#334d5d78",
+        mainBlobBottomLeft: "#2f4f6f96",
+
+        headerTop: "#303845",
+        headerBottom: "#252d39",
+        headerBorder: "#687488",
+
+        menuButtonBorder: "#8b98ad",
+        menuButtonBorderDown: "#a8b8d0",
+        menuButtonTop: "#5a667b",
+        menuButtonTopDown: "#4d586a",
+        menuButtonBottom: "#4e596b",
+        menuButtonBottomDown: "#434d5d",
+
+        titleText: "#edf2fb",
+
+        statusRunningTop: "#4d75c0",
+        statusRunningBottom: "#3f63a6",
+        statusRunningBorder: "#9fc0ff",
+        statusIdleTop: "#4b5568",
+        statusIdleBottom: "#3f4859",
+        statusIdleBorder: "#8e9aaf",
+        statusText: "#f3f7ff",
+
+        drawerTop: "#2b3340",
+        drawerBottom: "#232b36",
+        drawerBorder: "#616d82",
+        drawerOverlay: "#b10f1218",
+
+        textPrimary: "#f3f7ff",
+        textSecondary: "#b5bed0",
+        textError: "#ff9eac",
+        drawerTitleText: "#edf2fb",
+        drawerSubtitleText: "#bcc5d7",
+
+        listRowBorder: "#6a7588",
+        listRowTop: "#384353",
+        listRowBottom: "#303949",
+        listRowText: "#eef2fa"
     }
 };
 
@@ -253,8 +481,20 @@ function themeNames() {
     return Object.keys(themes);
 }
 
-function color(role) {
-    var palette = themes[currentThemeName] || themes.ocean;
+function resolvePalette(themeName) {
+    if (themeName !== undefined && themes[themeName] !== undefined) {
+        return themes[themeName];
+    }
+
+    if (themes[currentThemeName] !== undefined) {
+        return themes[currentThemeName];
+    }
+
+    return themes.ocean;
+}
+
+function color(role, themeName) {
+    var palette = resolvePalette(themeName);
     if (palette[role] !== undefined) {
         return palette[role];
     }
@@ -267,90 +507,134 @@ function color(role) {
     return "#ff00ff";
 }
 
+function colorFor(themeName, role) {
+    return color(role, themeName);
+}
+
+function fieldTextFor(themeName, enabled) {
+    return enabled ? color("fieldTextEnabled", themeName) : color("fieldTextDisabled", themeName);
+}
+
+function buttonBorderFor(themeName, enabled, primary, danger, down) {
+    if (!enabled) {
+        return color("buttonDisabledBorder", themeName);
+    }
+
+    if (primary) {
+        return down ? color("buttonPrimaryBorderDown", themeName) : color("buttonPrimaryBorder", themeName);
+    }
+
+    if (danger) {
+        return down ? color("buttonDangerBorderDown", themeName) : color("buttonDangerBorder", themeName);
+    }
+
+    return down ? color("buttonNormalBorderDown", themeName) : color("buttonNormalBorder", themeName);
+}
+
+function buttonTopFor(themeName, enabled, primary, danger, down) {
+    if (!enabled) {
+        return color("buttonDisabledTop", themeName);
+    }
+
+    if (primary) {
+        return down ? color("buttonPrimaryTopDown", themeName) : color("buttonPrimaryTop", themeName);
+    }
+
+    if (danger) {
+        return down ? color("buttonDangerTopDown", themeName) : color("buttonDangerTop", themeName);
+    }
+
+    return down ? color("buttonNormalTopDown", themeName) : color("buttonNormalTop", themeName);
+}
+
+function buttonBottomFor(themeName, enabled, primary, danger, down) {
+    if (!enabled) {
+        return color("buttonDisabledBottom", themeName);
+    }
+
+    if (primary) {
+        return down ? color("buttonPrimaryBottomDown", themeName) : color("buttonPrimaryBottom", themeName);
+    }
+
+    if (danger) {
+        return down ? color("buttonDangerBottomDown", themeName) : color("buttonDangerBottom", themeName);
+    }
+
+    return down ? color("buttonNormalBottomDown", themeName) : color("buttonNormalBottom", themeName);
+}
+
+function spinIndicatorBorderFor(themeName, enabled, pressed) {
+    if (!enabled) {
+        return color("buttonDisabledBorder", themeName);
+    }
+
+    return pressed ? color("spinIndicatorBorderPressed", themeName) : color("spinIndicatorBorder", themeName);
+}
+
+function spinIndicatorTopFor(themeName, enabled, pressed) {
+    if (!enabled) {
+        return color("buttonDisabledTop", themeName);
+    }
+
+    return pressed ? color("spinIndicatorTopPressed", themeName) : color("spinIndicatorTop", themeName);
+}
+
+function spinIndicatorBottomFor(themeName, enabled, pressed) {
+    if (!enabled) {
+        return color("buttonDisabledBottom", themeName);
+    }
+
+    return pressed ? color("spinIndicatorBottomPressed", themeName) : color("spinIndicatorBottom", themeName);
+}
+
+function sliderHandleBorderFor(themeName, pressed) {
+    return pressed ? color("sliderHandleBorderPressed", themeName) : color("sliderHandleBorder", themeName);
+}
+
+function sliderHandleTopFor(themeName, pressed) {
+    return pressed ? color("sliderHandleTopPressed", themeName) : color("sliderHandleTop", themeName);
+}
+
+function sliderHandleBottomFor(themeName, pressed) {
+    return pressed ? color("sliderHandleBottomPressed", themeName) : color("sliderHandleBottom", themeName);
+}
+
 function fieldText(enabled) {
-    return enabled ? color("fieldTextEnabled") : color("fieldTextDisabled");
+    return fieldTextFor(undefined, enabled);
 }
 
 function buttonBorder(enabled, primary, danger, down) {
-    if (!enabled) {
-        return color("buttonDisabledBorder");
-    }
-
-    if (primary) {
-        return down ? color("buttonPrimaryBorderDown") : color("buttonPrimaryBorder");
-    }
-
-    if (danger) {
-        return down ? color("buttonDangerBorderDown") : color("buttonDangerBorder");
-    }
-
-    return down ? color("buttonNormalBorderDown") : color("buttonNormalBorder");
+    return buttonBorderFor(undefined, enabled, primary, danger, down);
 }
 
 function buttonTop(enabled, primary, danger, down) {
-    if (!enabled) {
-        return color("buttonDisabledTop");
-    }
-
-    if (primary) {
-        return down ? color("buttonPrimaryTopDown") : color("buttonPrimaryTop");
-    }
-
-    if (danger) {
-        return down ? color("buttonDangerTopDown") : color("buttonDangerTop");
-    }
-
-    return down ? color("buttonNormalTopDown") : color("buttonNormalTop");
+    return buttonTopFor(undefined, enabled, primary, danger, down);
 }
 
 function buttonBottom(enabled, primary, danger, down) {
-    if (!enabled) {
-        return color("buttonDisabledBottom");
-    }
-
-    if (primary) {
-        return down ? color("buttonPrimaryBottomDown") : color("buttonPrimaryBottom");
-    }
-
-    if (danger) {
-        return down ? color("buttonDangerBottomDown") : color("buttonDangerBottom");
-    }
-
-    return down ? color("buttonNormalBottomDown") : color("buttonNormalBottom");
+    return buttonBottomFor(undefined, enabled, primary, danger, down);
 }
 
 function spinIndicatorBorder(enabled, pressed) {
-    if (!enabled) {
-        return color("buttonDisabledBorder");
-    }
-
-    return pressed ? color("spinIndicatorBorderPressed") : color("spinIndicatorBorder");
+    return spinIndicatorBorderFor(undefined, enabled, pressed);
 }
 
 function spinIndicatorTop(enabled, pressed) {
-    if (!enabled) {
-        return color("buttonDisabledTop");
-    }
-
-    return pressed ? color("spinIndicatorTopPressed") : color("spinIndicatorTop");
+    return spinIndicatorTopFor(undefined, enabled, pressed);
 }
 
 function spinIndicatorBottom(enabled, pressed) {
-    if (!enabled) {
-        return color("buttonDisabledBottom");
-    }
-
-    return pressed ? color("spinIndicatorBottomPressed") : color("spinIndicatorBottom");
+    return spinIndicatorBottomFor(undefined, enabled, pressed);
 }
 
 function sliderHandleBorder(pressed) {
-    return pressed ? color("sliderHandleBorderPressed") : color("sliderHandleBorder");
+    return sliderHandleBorderFor(undefined, pressed);
 }
 
 function sliderHandleTop(pressed) {
-    return pressed ? color("sliderHandleTopPressed") : color("sliderHandleTop");
+    return sliderHandleTopFor(undefined, pressed);
 }
 
 function sliderHandleBottom(pressed) {
-    return pressed ? color("sliderHandleBottomPressed") : color("sliderHandleBottom");
+    return sliderHandleBottomFor(undefined, pressed);
 }

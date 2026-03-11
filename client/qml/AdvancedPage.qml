@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import QtQuick.Window
 import "components"
+import "components/DMTheme.js" as DMTheme
 
 Item {
     id: page
@@ -10,6 +12,21 @@ Item {
     property bool previewFullscreen: false
     property real previewFullscreenScale: 1.0
     property real previewPinchStartScale: 1.0
+    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                          ? ApplicationWindow.window.dmThemeName
+                                          : "ocean"
+    readonly property color textPrimary: DMTheme.colorFor(dmThemeName, "textPrimary")
+    readonly property color textSecondary: DMTheme.colorFor(dmThemeName, "textSecondary")
+    readonly property color textError: DMTheme.colorFor(dmThemeName, "textError")
+    readonly property color listRowBorder: DMTheme.colorFor(dmThemeName, "listRowBorder")
+    readonly property color listRowTop: DMTheme.colorFor(dmThemeName, "listRowTop")
+    readonly property color listRowBottom: DMTheme.colorFor(dmThemeName, "listRowBottom")
+    readonly property color listRowText: DMTheme.colorFor(dmThemeName, "listRowText")
+
+    DMPreviewChrome {
+        id: previewChrome
+        themeName: page.dmThemeName
+    }
 
     ScrollView {
         anchors.fill: parent
@@ -37,13 +54,13 @@ Item {
                     Label {
                         text: "Status: " + viewModel.statusText
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     Label {
                         visible: viewModel.lastError.length > 0
                         text: viewModel.lastError
-                        color: "#ff7f90"
+                        color: page.textError
                         wrapMode: Text.Wrap
                     }
                 }
@@ -65,7 +82,7 @@ Item {
                     Label {
                         text: "Prompt"
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     DMTextArea {
@@ -79,7 +96,7 @@ Item {
 
                     Label {
                         text: "Negative Prompt"
-                        color: "#b7cbde"
+                        color: page.textSecondary
                     }
 
                     DMTextArea {
@@ -112,14 +129,14 @@ Item {
                         Label {
                             text: "Input Images"
                             font.bold: true
-                            color: "#f0f7ff"
+                            color: page.textPrimary
                         }
 
                         Item { Layout.fillWidth: true }
 
                         Label {
                             text: viewModel.inputImages.length + "/4"
-                            color: "#b7cbde"
+                            color: page.textSecondary
                         }
                     }
 
@@ -152,10 +169,10 @@ Item {
 
                             Layout.fillWidth: true
                             radius: 12
-                            border.color: "#4a6b87"
+                            border.color: page.listRowBorder
                             gradient: Gradient {
-                                GradientStop { position: 0.0; color: "#21394d" }
-                                GradientStop { position: 1.0; color: "#1a2e40" }
+                                GradientStop { position: 0.0; color: page.listRowTop }
+                                GradientStop { position: 1.0; color: page.listRowBottom }
                             }
                             implicitHeight: row.implicitHeight + 10
 
@@ -169,7 +186,7 @@ Item {
                                     Layout.fillWidth: true
                                     text: modelData
                                     elide: Text.ElideMiddle
-                                    color: "#e0edf9"
+                                    color: page.listRowText
                                 }
 
                                 DMButton {
@@ -201,7 +218,7 @@ Item {
                     Label {
                         text: "Generation Settings"
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     RowLayout {
@@ -210,7 +227,7 @@ Item {
 
                         Label {
                             text: "Width"
-                            color: "#b7cbde"
+                            color: page.textSecondary
                         }
 
                         DMSpinBox {
@@ -224,7 +241,7 @@ Item {
 
                         Label {
                             text: "Height"
-                            color: "#b7cbde"
+                            color: page.textSecondary
                         }
 
                         DMSpinBox {
@@ -241,7 +258,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Seed"; color: "#b7cbde" }
+                        Label { text: "Seed"; color: page.textSecondary }
 
                         DMTextField {
                             Layout.fillWidth: true
@@ -257,7 +274,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Steps"; color: "#b7cbde" }
+                        Label { text: "Steps"; color: page.textSecondary }
 
                         DMSpinBox {
                             from: 1
@@ -270,7 +287,7 @@ Item {
 
                         Label {
                             text: "CFG"
-                            color: "#b7cbde"
+                            color: page.textSecondary
                         }
 
                         DMSlider {
@@ -325,7 +342,7 @@ Item {
 
                         Label {
                             text: "Denoise"
-                            color: "#b7cbde"
+                            color: page.textSecondary
                         }
 
                         DMSlider {
@@ -378,7 +395,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Sampler"; color: "#b7cbde" }
+                        Label { text: "Sampler"; color: page.textSecondary }
                         DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -391,7 +408,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Scheduler"; color: "#b7cbde" }
+                        Label { text: "Scheduler"; color: page.textSecondary }
                         DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -418,7 +435,7 @@ Item {
                     Label {
                         text: "Output + Server"
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     RowLayout {
@@ -445,7 +462,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#b7cbde"
+                        color: page.textSecondary
                         text: "Album source: " + viewModel.photoPickerDirUrl.toString()
                     }
 
@@ -453,7 +470,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#b7cbde"
+                        color: page.textSecondary
                         text: "Save path: " + viewModel.picturesDirUrl.toString() + "/DreamMachine"
                     }
 
@@ -461,7 +478,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Host"; color: "#b7cbde" }
+                        Label { text: "Host"; color: page.textSecondary }
                         DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
@@ -469,7 +486,7 @@ Item {
                             onTextChanged: viewModel.host = text
                         }
 
-                        Label { text: "Port"; color: "#b7cbde" }
+                        Label { text: "Port"; color: page.textSecondary }
                         DMSpinBox {
                             from: 1
                             to: 65535
@@ -531,17 +548,17 @@ Item {
                     Label {
                         text: "Preview"
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 260
                         radius: 14
-                        border.color: "#3b5a76"
+                        border.color: previewChrome.surfaceBorder
                         gradient: Gradient {
-                            GradientStop { position: 0.0; color: "#172938" }
-                            GradientStop { position: 1.0; color: "#132435" }
+                            GradientStop { position: 0.0; color: previewChrome.surfaceTop }
+                            GradientStop { position: 1.0; color: previewChrome.surfaceBottom }
                         }
 
                         Image {
@@ -565,7 +582,7 @@ Item {
                         Label {
                             anchors.centerIn: parent
                             text: "No preview yet"
-                            color: "#8ea5bb"
+                            color: previewChrome.hintText
                             visible: viewModel.previewImageUrl.length === 0
                         }
 
@@ -575,7 +592,7 @@ Item {
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             anchors.margins: 8
-                            color: "#ff7f90"
+                            color: previewChrome.errorText
                             wrapMode: Text.Wrap
                             visible: text.length > 0
                         }
@@ -606,7 +623,7 @@ Item {
                     Label {
                         text: "Result"
                         font.bold: true
-                        color: "#f0f7ff"
+                        color: page.textPrimary
                     }
 
                     DMTextArea {
@@ -687,7 +704,7 @@ Item {
         anchors.fill: parent
         visible: page.previewFullscreen
         z: 1000
-        color: "#cc000000"
+        color: previewChrome.fullscreenOverlay
 
         onVisibleChanged: {
             if (visible) {
@@ -725,7 +742,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
-            color: "#e6eef8"
+            color: previewChrome.fullscreenHint
             text: "Pinch to zoom, tap image to exit fullscreen"
             visible: viewModel.previewImageUrl.length > 0
         }

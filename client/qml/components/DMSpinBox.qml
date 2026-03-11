@@ -1,9 +1,13 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import "DMTheme.js" as DMTheme
 
 SpinBox {
     id: control
+    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                          ? ApplicationWindow.window.dmThemeName
+                                          : "ocean"
 
     implicitWidth: 118
     implicitHeight: 42
@@ -26,9 +30,9 @@ SpinBox {
         anchors.bottomMargin: control.bottomPadding
         text: control.displayText
         font: control.font
-        color: DMTheme.fieldText(control.enabled)
-        selectionColor: DMTheme.color("fieldSelection")
-        selectedTextColor: DMTheme.color("fieldSelectedText")
+        color: DMTheme.fieldTextFor(control.dmThemeName, control.enabled)
+        selectionColor: DMTheme.colorFor(control.dmThemeName, "fieldSelection")
+        selectedTextColor: DMTheme.colorFor(control.dmThemeName, "fieldSelectedText")
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
         readOnly: !control.editable
@@ -43,10 +47,12 @@ SpinBox {
     background: Rectangle {
         radius: 12
         border.width: control.activeFocus ? 2 : 1
-        border.color: control.activeFocus ? DMTheme.color("fieldBorderFocus") : DMTheme.color("fieldBorder")
+        border.color: control.activeFocus
+                      ? DMTheme.colorFor(control.dmThemeName, "fieldBorderFocus")
+                      : DMTheme.colorFor(control.dmThemeName, "fieldBorder")
         gradient: Gradient {
-            GradientStop { position: 0.0; color: DMTheme.color("fieldBgTop") }
-            GradientStop { position: 1.0; color: DMTheme.color("fieldBgBottom") }
+            GradientStop { position: 0.0; color: DMTheme.colorFor(control.dmThemeName, "fieldBgTop") }
+            GradientStop { position: 1.0; color: DMTheme.colorFor(control.dmThemeName, "fieldBgBottom") }
         }
     }
 
@@ -58,22 +64,28 @@ SpinBox {
         height: control.height - 8
         radius: 10
         border.width: 1
-                border.color: DMTheme.spinIndicatorBorder(control.enabled, control.down.pressed)
+        border.color: DMTheme.spinIndicatorBorderFor(control.dmThemeName,
+                                                     control.enabled,
+                                                     control.down.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                                color: DMTheme.spinIndicatorTop(control.enabled, control.down.pressed)
+                color: DMTheme.spinIndicatorTopFor(control.dmThemeName,
+                                                   control.enabled,
+                                                   control.down.pressed)
             }
             GradientStop {
                 position: 1.0
-                                color: DMTheme.spinIndicatorBottom(control.enabled, control.down.pressed)
+                color: DMTheme.spinIndicatorBottomFor(control.dmThemeName,
+                                                      control.enabled,
+                                                      control.down.pressed)
             }
         }
 
         Text {
             anchors.centerIn: parent
             text: "-"
-            color: DMTheme.color("spinIndicatorText")
+            color: DMTheme.colorFor(control.dmThemeName, "spinIndicatorText")
             font.pixelSize: 18
             font.bold: true
         }
@@ -87,22 +99,28 @@ SpinBox {
         height: control.height - 8
         radius: 10
         border.width: 1
-                border.color: DMTheme.spinIndicatorBorder(control.enabled, control.up.pressed)
+        border.color: DMTheme.spinIndicatorBorderFor(control.dmThemeName,
+                                                     control.enabled,
+                                                     control.up.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                                color: DMTheme.spinIndicatorTop(control.enabled, control.up.pressed)
+                color: DMTheme.spinIndicatorTopFor(control.dmThemeName,
+                                                   control.enabled,
+                                                   control.up.pressed)
             }
             GradientStop {
                 position: 1.0
-                                color: DMTheme.spinIndicatorBottom(control.enabled, control.up.pressed)
+                color: DMTheme.spinIndicatorBottomFor(control.dmThemeName,
+                                                      control.enabled,
+                                                      control.up.pressed)
             }
         }
 
         Text {
             anchors.centerIn: parent
             text: "+"
-            color: DMTheme.color("spinIndicatorText")
+            color: DMTheme.colorFor(control.dmThemeName, "spinIndicatorText")
             font.pixelSize: 17
             font.bold: true
         }

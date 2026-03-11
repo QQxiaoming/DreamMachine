@@ -1,9 +1,13 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import "DMTheme.js" as DMTheme
 
 Slider {
     id: control
+    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                          ? ApplicationWindow.window.dmThemeName
+                                          : "ocean"
 
     implicitHeight: 30
     padding: 0
@@ -18,10 +22,10 @@ Slider {
             anchors.fill: parent
             radius: height / 2
             border.width: 1
-            border.color: DMTheme.color("sliderTrackBorder")
+            border.color: DMTheme.colorFor(control.dmThemeName, "sliderTrackBorder")
             gradient: Gradient {
-                GradientStop { position: 0.0; color: DMTheme.color("sliderTrackTop") }
-                GradientStop { position: 1.0; color: DMTheme.color("sliderTrackBottom") }
+                GradientStop { position: 0.0; color: DMTheme.colorFor(control.dmThemeName, "sliderTrackTop") }
+                GradientStop { position: 1.0; color: DMTheme.colorFor(control.dmThemeName, "sliderTrackBottom") }
             }
         }
 
@@ -30,10 +34,10 @@ Slider {
             height: parent.height
             radius: height / 2
             border.width: 1
-            border.color: DMTheme.color("sliderFillBorder")
+            border.color: DMTheme.colorFor(control.dmThemeName, "sliderFillBorder")
             gradient: Gradient {
-                GradientStop { position: 0.0; color: DMTheme.color("sliderFillTop") }
-                GradientStop { position: 1.0; color: DMTheme.color("sliderFillBottom") }
+                GradientStop { position: 0.0; color: DMTheme.colorFor(control.dmThemeName, "sliderFillTop") }
+                GradientStop { position: 1.0; color: DMTheme.colorFor(control.dmThemeName, "sliderFillBottom") }
             }
         }
     }
@@ -45,15 +49,15 @@ Slider {
         height: 20
         radius: 10
         border.width: 1
-        border.color: DMTheme.sliderHandleBorder(control.pressed)
+        border.color: DMTheme.sliderHandleBorderFor(control.dmThemeName, control.pressed)
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                color: DMTheme.sliderHandleTop(control.pressed)
+                color: DMTheme.sliderHandleTopFor(control.dmThemeName, control.pressed)
             }
             GradientStop {
                 position: 1.0
-                color: DMTheme.sliderHandleBottom(control.pressed)
+                color: DMTheme.sliderHandleBottomFor(control.dmThemeName, control.pressed)
             }
         }
         scale: control.pressed ? 1.08 : 1.0

@@ -2,7 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import QtQuick.Window
 import "components"
+import "components/DMTheme.js" as DMTheme
 
 Item {
     id: page
@@ -22,6 +24,16 @@ Item {
     readonly property string currentPreviewError: previewSwipe.currentIndex === 0
                                                 ? originalPreviewError
                                                 : generatedPreviewError
+    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                          ? ApplicationWindow.window.dmThemeName
+                                          : "ocean"
+    readonly property color textPrimary: DMTheme.colorFor(dmThemeName, "textPrimary")
+    readonly property color textError: DMTheme.colorFor(dmThemeName, "textError")
+
+    DMPreviewChrome {
+        id: previewChrome
+        themeName: page.dmThemeName
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -43,14 +55,14 @@ Item {
                 Label {
                     text: "Status: " + viewModel.statusText
                     font.bold: true
-                    color: "#f0f7ff"
+                    color: page.textPrimary
                 }
 
                 Label {
                     visible: viewModel.lastError.length > 0
                     Layout.fillWidth: true
                     wrapMode: Text.Wrap
-                    color: "#ff7f90"
+                    color: page.textError
                     text: viewModel.lastError
                 }
             }
@@ -65,10 +77,10 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 10
                 radius: 14
-                border.color: "#3b5a76"
+                border.color: previewChrome.surfaceBorder
                 gradient: Gradient {
-                    GradientStop { position: 0.0; color: "#172938" }
-                    GradientStop { position: 1.0; color: "#132435" }
+                    GradientStop { position: 0.0; color: previewChrome.surfaceTop }
+                    GradientStop { position: 1.0; color: previewChrome.surfaceBottom }
                 }
 
                 SwipeView {
@@ -89,10 +101,10 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                border.color: "#67a7d4"
+                                border.color: previewChrome.badgeBorder
                                 gradient: Gradient {
-                                    GradientStop { position: 0.0; color: "#2f5d7f" }
-                                    GradientStop { position: 1.0; color: "#274f6d" }
+                                    GradientStop { position: 0.0; color: previewChrome.badgeTop }
+                                    GradientStop { position: 1.0; color: previewChrome.badgeBottom }
                                 }
                                 implicitWidth: originalBadgeLabel.implicitWidth + 14
                                 implicitHeight: originalBadgeLabel.implicitHeight + 6
@@ -101,7 +113,7 @@ Item {
                                     id: originalBadgeLabel
                                     anchors.centerIn: parent
                                     text: "Original"
-                                    color: "#e3edf8"
+                                    color: previewChrome.badgeText
                                     font.bold: true
                                 }
                             }
@@ -130,7 +142,7 @@ Item {
                             Label {
                                 anchors.centerIn: parent
                                 text: "No original image selected"
-                                color: "#8ea5bb"
+                                color: previewChrome.hintText
                                 visible: page.originalImageUrl.length === 0
                             }
 
@@ -154,10 +166,10 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                border.color: "#67a7d4"
+                                border.color: previewChrome.badgeBorder
                                 gradient: Gradient {
-                                    GradientStop { position: 0.0; color: "#2f5d7f" }
-                                    GradientStop { position: 1.0; color: "#274f6d" }
+                                    GradientStop { position: 0.0; color: previewChrome.badgeTop }
+                                    GradientStop { position: 1.0; color: previewChrome.badgeBottom }
                                 }
                                 implicitWidth: generatedBadgeLabel.implicitWidth + 14
                                 implicitHeight: generatedBadgeLabel.implicitHeight + 6
@@ -166,7 +178,7 @@ Item {
                                     id: generatedBadgeLabel
                                     anchors.centerIn: parent
                                     text: "Generated"
-                                    color: "#e3edf8"
+                                    color: previewChrome.badgeText
                                     font.bold: true
                                 }
                             }
@@ -197,7 +209,7 @@ Item {
                                 text: viewModel.running && page.waitingResult
                                       ? "Generating..."
                                       : "No generated image yet"
-                                color: "#8ea5bb"
+                                color: previewChrome.hintText
                                 visible: page.generatedImageUrl.length === 0
                             }
 
@@ -222,7 +234,9 @@ Item {
                         implicitWidth: 9
                         implicitHeight: 9
                         radius: 5
-                        color: index === previewSwipe.currentIndex ? "#63ddbc" : "#48637c"
+                        color: index === previewSwipe.currentIndex
+                               ? previewChrome.indicatorActive
+                               : previewChrome.indicatorInactive
                         opacity: 0.95
                     }
                 }
@@ -239,7 +253,7 @@ Item {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     anchors.margins: 8
-                    color: "#ff7f90"
+                                        color: previewChrome.errorText
                     wrapMode: Text.Wrap
                     visible: page.currentPreviewError.length > 0 || viewModel.lastError.length > 0
                     text: page.currentPreviewError.length > 0
@@ -385,7 +399,7 @@ Item {
         anchors.fill: parent
         visible: page.previewFullscreen
         z: 1000
-        color: "#cc000000"
+        color: previewChrome.fullscreenOverlay
 
         onVisibleChanged: {
             if (visible) {
@@ -423,7 +437,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
-            color: "#e6eef8"
+            color: previewChrome.fullscreenHint
             text: "Pinch to zoom, tap image to exit fullscreen"
             visible: page.currentPreviewUrl.length > 0
         }

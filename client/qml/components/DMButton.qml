@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import "DMTheme.js" as DMTheme
 
 Button {
@@ -8,6 +9,9 @@ Button {
     property bool primary: false
     property bool danger: false
     property bool compact: false
+    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                          ? ApplicationWindow.window.dmThemeName
+                                          : "ocean"
 
     implicitHeight: compact ? 34 : 42
     implicitWidth: Math.max(compact ? 90 : 112, contentItem.implicitWidth + leftPadding + rightPadding)
@@ -34,7 +38,7 @@ Button {
         text: control.text
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        color: DMTheme.color("buttonText")
+        color: DMTheme.colorFor(control.dmThemeName, "buttonText")
         font: control.font
         elide: Text.ElideRight
     }
@@ -43,16 +47,28 @@ Button {
         id: bg
         radius: control.compact ? 11 : 13
         border.width: 1
-                border.color: DMTheme.buttonBorder(control.enabled, control.primary, control.danger, control.down)
+        border.color: DMTheme.buttonBorderFor(control.dmThemeName,
+                                              control.enabled,
+                                              control.primary,
+                                              control.danger,
+                                              control.down)
 
         gradient: Gradient {
             GradientStop {
                 position: 0.0
-                                color: DMTheme.buttonTop(control.enabled, control.primary, control.danger, control.down)
+                color: DMTheme.buttonTopFor(control.dmThemeName,
+                                            control.enabled,
+                                            control.primary,
+                                            control.danger,
+                                            control.down)
             }
             GradientStop {
                 position: 1.0
-                                color: DMTheme.buttonBottom(control.enabled, control.primary, control.danger, control.down)
+                color: DMTheme.buttonBottomFor(control.dmThemeName,
+                                               control.enabled,
+                                               control.primary,
+                                               control.danger,
+                                               control.down)
             }
         }
     }
