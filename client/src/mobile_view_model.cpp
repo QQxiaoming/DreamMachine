@@ -16,6 +16,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QMetaObject>
+#include <QPointer>
 #include <QRandomGenerator>
 #include <QStringList>
 #include <QStandardPaths>
@@ -653,33 +655,52 @@ void MobileViewModel::saveGeneratedImage()
 void MobileViewModel::saveGeneratedImageToAlbum()
 {
 #if defined(Q_OS_IOS)
-    const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(m_lastGeneratedImageBytes);
-    if (!iosSaveResult.ok) {
-        if (setStringIfChanged(m_lastError, iosSaveResult.error)) {
-            emit lastErrorChanged();
-        }
-        m_statusText = "Save Failed";
-        emit statusTextChanged();
-        return;
-    }
-
-    if (setStringIfChanged(m_lastError, QString())) {
-        emit lastErrorChanged();
-    }
-
-    m_statusText = "Saved To Album";
+    const QByteArray imageBytes = m_lastGeneratedImageBytes;
+    m_statusText = "Saving To Album...";
     emit statusTextChanged();
 
-    if (!m_resultText.isEmpty()) {
-        m_resultText.append('\n');
-    }
+    QPointer<MobileViewModel> self(this);
+    QtConcurrent::run([self, imageBytes]() {
+        const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(imageBytes);
+        if (!self) {
+            return;
+        }
 
-    if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
-        m_resultText.append("Saved image to iOS Photos.");
-    } else {
-        m_resultText.append(QString("Saved image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
-    }
-    emit resultTextChanged();
+        QMetaObject::invokeMethod(self.data(), [self, iosSaveResult]() {
+            if (!self) {
+                return;
+            }
+
+            if (!iosSaveResult.ok) {
+                if (setStringIfChanged(self->m_lastError, iosSaveResult.error)) {
+                    emit self->lastErrorChanged();
+                }
+                self->m_statusText = "Save Failed";
+                emit self->statusTextChanged();
+                return;
+            }
+
+            if (setStringIfChanged(self->m_lastError, QString())) {
+                emit self->lastErrorChanged();
+            }
+
+            self->m_statusText = "Saved To Album";
+            emit self->statusTextChanged();
+
+            if (!self->m_resultText.isEmpty()) {
+                self->m_resultText.append('\n');
+            }
+
+            if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
+                self->m_resultText.append("Saved image to iOS Photos.");
+            } else {
+                self->m_resultText.append(
+                    QString("Saved image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
+            }
+            emit self->resultTextChanged();
+        }, Qt::QueuedConnection);
+    });
+    return;
 #else
 
     const QString albumDirPath = defaultPicturesDirPath();
@@ -796,33 +817,51 @@ void MobileViewModel::saveComparisonImageToAlbum(const QUrl &originalImageUrl)
     }
 
 #if defined(Q_OS_IOS)
-    const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(comparisonImageBytes);
-    if (!iosSaveResult.ok) {
-        if (setStringIfChanged(m_lastError, iosSaveResult.error)) {
-            emit lastErrorChanged();
-        }
-        m_statusText = "Save Failed";
-        emit statusTextChanged();
-        return;
-    }
-
-    if (setStringIfChanged(m_lastError, QString())) {
-        emit lastErrorChanged();
-    }
-
-    m_statusText = "Saved Compare To Album";
+    m_statusText = "Saving Compare To Album...";
     emit statusTextChanged();
 
-    if (!m_resultText.isEmpty()) {
-        m_resultText.append('\n');
-    }
+    QPointer<MobileViewModel> self(this);
+    QtConcurrent::run([self, comparisonImageBytes]() {
+        const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(comparisonImageBytes);
+        if (!self) {
+            return;
+        }
 
-    if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
-        m_resultText.append("Saved comparison image to iOS Photos.");
-    } else {
-        m_resultText.append(QString("Saved comparison image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
-    }
-    emit resultTextChanged();
+        QMetaObject::invokeMethod(self.data(), [self, iosSaveResult]() {
+            if (!self) {
+                return;
+            }
+
+            if (!iosSaveResult.ok) {
+                if (setStringIfChanged(self->m_lastError, iosSaveResult.error)) {
+                    emit self->lastErrorChanged();
+                }
+                self->m_statusText = "Save Failed";
+                emit self->statusTextChanged();
+                return;
+            }
+
+            if (setStringIfChanged(self->m_lastError, QString())) {
+                emit self->lastErrorChanged();
+            }
+
+            self->m_statusText = "Saved Compare To Album";
+            emit self->statusTextChanged();
+
+            if (!self->m_resultText.isEmpty()) {
+                self->m_resultText.append('\n');
+            }
+
+            if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
+                self->m_resultText.append("Saved comparison image to iOS Photos.");
+            } else {
+                self->m_resultText.append(
+                    QString("Saved comparison image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
+            }
+            emit self->resultTextChanged();
+        }, Qt::QueuedConnection);
+    });
+    return;
 #else
     const QString albumDirPath = defaultPicturesDirPath();
     if (albumDirPath.isEmpty()) {

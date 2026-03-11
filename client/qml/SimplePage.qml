@@ -433,16 +433,30 @@ Item {
             }
         }
 
+        RoundButton {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: 20
+            anchors.rightMargin: 20
+            text: "\u2715"
+            visible: page.currentPreviewUrl.length > 0
+            z: 2
+            onClicked: page.previewFullscreen = false
+        }
+
         Label {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 24
             color: previewChrome.fullscreenHint
-            text: "Pinch to zoom, tap image to exit fullscreen"
+            text: "Pinch to zoom, tap image or X to exit fullscreen"
             visible: page.currentPreviewUrl.length > 0
         }
 
         TapHandler {
+            enabled: page.currentPreviewUrl.length > 0
+            acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
+            gesturePolicy: TapHandler.ReleaseWithinBounds
             onTapped: page.previewFullscreen = false
         }
     }
