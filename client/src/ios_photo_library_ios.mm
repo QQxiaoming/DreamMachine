@@ -211,7 +211,7 @@ void saveImageBytesToPhotoLibraryAsync(
 
 IosPhotoLibrarySaveResult saveImageBytesToPhotoLibrary(const QByteArray &imageBytes)
 {
-    __block IosPhotoLibrarySaveResult finalResult;
+    IosPhotoLibrarySaveResult finalResult;
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
 
     saveImageBytesToPhotoLibraryAsync(
