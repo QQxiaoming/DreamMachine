@@ -40,7 +40,10 @@ int main(int argc, char *argv[])
 
     return application.exec();
 #else
+    // Keep native dialogs on iOS so file pickers use the system UI.
+#if !defined(Q_OS_IOS)
     QApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+#endif
     QApplication application(argc, argv);
 
     GlobalSetting settings;

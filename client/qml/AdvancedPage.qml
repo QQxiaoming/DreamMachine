@@ -694,7 +694,8 @@ Item {
     FileDialog {
         id: presetSaveDialog
         title: "Save preset"
-        fileMode: FileDialog.SaveFile
+        // iOS SaveFile falls back to the Qt dialog; OpenFile keeps the native picker.
+        fileMode: Qt.platform.os === "ios" ? FileDialog.OpenFile : FileDialog.SaveFile
         defaultSuffix: "json"
         nameFilters: ["JSON (*.json)", "All files (*)"]
         onAccepted: viewModel.savePresetToUrl(selectedFile)
