@@ -8,11 +8,17 @@ ComboBox {
 
     property string themeName: ""
     property bool compact: false
+    property string emptyText: ""
+    property var textFormatter: null
     readonly property string dmThemeName: themeName.length > 0
                                           ? themeName
                                           : ((ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
                                              ? ApplicationWindow.window.dmThemeName
                                              : "ocean")
+
+    function formattedText(value, index) {
+        return textFormatter ? textFormatter(value, index) : value
+    }
 
     implicitHeight: compact ? 34 : 42
     leftPadding: compact ? 12 : 14
@@ -26,7 +32,9 @@ ComboBox {
     opacity: control.enabled ? 1.0 : 0.58
 
     contentItem: Text {
-        text: control.displayText
+        text: control.currentIndex >= 0
+              ? control.formattedText(control.currentText, control.currentIndex)
+              : control.emptyText
         color: DMTheme.fieldTextFor(control.dmThemeName, control.enabled)
         font: control.font
         elide: Text.ElideRight
@@ -83,11 +91,11 @@ ComboBox {
         required property int index
 
         width: ListView.view ? ListView.view.width : control.width
-        text: control.textAt(index)
+        text: control.formattedText(control.textAt(index), index)
         highlighted: control.highlightedIndex === index
 
         contentItem: Text {
-            text: parent.text
+            text: control.formattedText(control.textAt(index), index)
             color: highlighted ? DMTheme.colorFor(control.dmThemeName, "buttonText")
                                : DMTheme.colorFor(control.dmThemeName, "listRowText")
             font: control.font

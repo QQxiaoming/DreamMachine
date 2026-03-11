@@ -234,16 +234,22 @@ ApplicationWindow {
                         id: themeSelector
                         Layout.fillWidth: true
                         enabled: !shell.switchingMode && shell.availableThemes.length > 0
+                        emptyText: "No themes"
                         model: shell.availableThemes
-                        currentIndex: shell.availableThemes.indexOf(shell.dmThemeName)
+                        currentIndex: {
+                            var idx = shell.availableThemes.indexOf(shell.dmThemeName)
+                            return idx >= 0 ? idx : (shell.availableThemes.length > 0 ? 0 : -1)
+                        }
+                        textFormatter: function(value) {
+                            return shell.themeDisplayName(value)
+                        }
 
-                        displayText: currentIndex >= 0
-                                     ? shell.themeDisplayName(shell.availableThemes[currentIndex])
-                                     : "No themes"
-
-                        onActivated: {
+                        onCurrentIndexChanged: {
                             if (currentIndex >= 0 && currentIndex < shell.availableThemes.length) {
-                                shell.dmThemeName = shell.availableThemes[currentIndex]
+                                var selectedTheme = shell.availableThemes[currentIndex]
+                                if (shell.dmThemeName !== selectedTheme) {
+                                    shell.dmThemeName = selectedTheme
+                                }
                             }
                         }
                     }
