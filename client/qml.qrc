@@ -17,5 +17,6 @@
         <file alias="components/themes/sunset.js">qml/components/themes/sunset.js</file>
         <file alias="components/themes/forest.js">qml/components/themes/forest.js</file>
         <file alias="components/themes/graphite.js">qml/components/themes/graphite.js</file>
+        <file alias="components/themes/rose.js">qml/components/themes/rose.js</file>
     </qresource>
 </RCC>

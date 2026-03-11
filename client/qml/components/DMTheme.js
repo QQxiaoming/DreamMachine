@@ -2,14 +2,16 @@
 .import "themes/sunset.js" as SunsetTheme
 .import "themes/forest.js" as ForestTheme
 .import "themes/graphite.js" as GraphiteTheme
+.import "themes/rose.js" as RoseTheme
 
-var currentThemeName = "ocean";
+var currentThemeName = "rose";
 
 var themes = {
     ocean: OceanTheme.palette,
     sunset: SunsetTheme.palette,
     forest: ForestTheme.palette,
-    graphite: GraphiteTheme.palette
+    graphite: GraphiteTheme.palette,
+    rose: RoseTheme.palette
 };
 
 function setTheme(name) {

@@ -17,7 +17,7 @@ ApplicationWindow {
     property string currentMode: viewModel.mobilePlatform ? "simple" : "advanced"
     property string pendingMode: currentMode
     property bool switchingMode: false
-    property string dmThemeName: "ocean"
+    property string dmThemeName: "rose"
     property var availableThemes: DMTheme.themeNames()
 
     onDmThemeNameChanged: DMTheme.setTheme(dmThemeName)
