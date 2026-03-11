@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/qml">
         <file alias="Main.qml">qml/Main.qml</file>
+        <file alias="SimplePage.qml">qml/SimplePage.qml</file>
+        <file alias="AdvancedPage.qml">qml/AdvancedPage.qml</file>
     </qresource>
 </RCC>

@@ -545,6 +545,74 @@ void MobileViewModel::runInference()
     m_watcher.setFuture(future);
 }
 
+void MobileViewModel::runSimpleInference()
+{
+    if (m_running) {
+        return;
+    }
+
+    if (mobilePlatform() && m_outputDir.trimmed().isEmpty()) {
+        m_outputDir = defaultPicturesDirPath();
+        emit outputDirChanged();
+    }
+
+    if (m_outputDir.trimmed().isEmpty()) {
+        if (setStringIfChanged(m_lastError, "Please set an output directory.")) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Missing Output";
+        emit statusTextChanged();
+        return;
+    }
+
+    if (m_inputImages.size() != 1) {
+        if (setStringIfChanged(m_lastError, "Simple mode requires exactly one input image.")) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Need One Image";
+        emit statusTextChanged();
+        return;
+    }
+
+    qint64 seedInput = 0;
+    QString seedError;
+    if (!tryParseSeed(seedInput, seedError)) {
+        if (setStringIfChanged(m_lastError, seedError)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Invalid Seed";
+        emit statusTextChanged();
+        return;
+    }
+
+    qint64 effectiveSeed = seedInput;
+    if (seedInput == -1) {
+        effectiveSeed = static_cast<qint64>(QRandomGenerator::global()->generate64()
+                                            & static_cast<quint64>(std::numeric_limits<qint64>::max()));
+    }
+
+    InferRequestParams params = buildInferParams(effectiveSeed);
+    params.inputImages = QStringList { m_inputImages.first() };
+    params.noInputImages = false;
+    const QSize clamped = clampResolutionKeepAspect(params.targetWidth, params.targetHeight);
+    params.targetWidth = clamped.width();
+    params.targetHeight = clamped.height();
+
+    m_resultText.clear();
+    emit resultTextChanged();
+
+    if (setStringIfChanged(m_lastError, QString())) {
+        emit lastErrorChanged();
+    }
+
+    setRunningState(true);
+
+    const QFuture<InferResult> future = QtConcurrent::run([this, params]() {
+        return m_inferenceClient.run(params);
+    });
+    m_watcher.setFuture(future);
+}
+
 void MobileViewModel::saveGeneratedImage()
 {
     ImageService::SaveRequest request;

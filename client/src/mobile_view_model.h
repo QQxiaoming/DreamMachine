@@ -106,6 +106,7 @@ public:
     Q_INVOKABLE void setOutputDirFromUrl(const QUrl &url);
 
     Q_INVOKABLE void runInference();
+    Q_INVOKABLE void runSimpleInference();
     Q_INVOKABLE void saveGeneratedImage();
     Q_INVOKABLE void saveGeneratedImageToAlbum();
 
