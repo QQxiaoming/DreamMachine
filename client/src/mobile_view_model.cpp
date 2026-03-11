@@ -4,10 +4,14 @@
 #include "ios_photo_library.h"
 #include "mainwindow_utils.h"
 
+#include <QBuffer>
+#include <QColor>
 #include <QDir>
 #include <QFileInfo>
+#include <QFont>
 #include <QFuture>
 #include <QImage>
+#include <QPainter>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -720,6 +724,148 @@ void MobileViewModel::saveGeneratedImageToAlbum()
 #endif
 }
 
+void MobileViewModel::saveComparisonImage(const QUrl &originalImageUrl)
+{
+    if (mobilePlatform() && m_outputDir.trimmed().isEmpty()) {
+        m_outputDir = defaultPicturesDirPath();
+        emit outputDirChanged();
+    }
+
+    if (m_outputDir.trimmed().isEmpty()) {
+        if (setStringIfChanged(m_lastError, "Please set output directory first.")) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    QByteArray comparisonImageBytes;
+    QString comparisonError;
+    if (!buildComparisonImageBytes(pathFromUrl(originalImageUrl), comparisonImageBytes, comparisonError)) {
+        if (setStringIfChanged(m_lastError, comparisonError)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    ImageService::SaveRequest request;
+    request.imageBytes = comparisonImageBytes;
+    request.outputFormat = "PNG";
+    request.outputDirPath = m_outputDir;
+    request.effectiveSeed = m_lastEffectiveSeed;
+    request.preset = collectPresetObject();
+
+    const ImageService::SaveResult saveResult = m_imageService.saveGeneratedImage(request);
+    if (!saveResult.ok) {
+        if (setStringIfChanged(m_lastError, saveResult.error)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    if (setStringIfChanged(m_lastError, QString())) {
+        emit lastErrorChanged();
+    }
+
+    m_statusText = "Saved Compare";
+    emit statusTextChanged();
+
+    if (!m_resultText.isEmpty()) {
+        m_resultText.append('\n');
+    }
+    m_resultText.append(QString("Saved comparison image: %1").arg(saveResult.filePath));
+    emit resultTextChanged();
+}
+
+void MobileViewModel::saveComparisonImageToAlbum(const QUrl &originalImageUrl)
+{
+    QByteArray comparisonImageBytes;
+    QString comparisonError;
+    if (!buildComparisonImageBytes(pathFromUrl(originalImageUrl), comparisonImageBytes, comparisonError)) {
+        if (setStringIfChanged(m_lastError, comparisonError)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+#if defined(Q_OS_IOS)
+    const IosPhotoLibrarySaveResult iosSaveResult = saveImageBytesToPhotoLibrary(comparisonImageBytes);
+    if (!iosSaveResult.ok) {
+        if (setStringIfChanged(m_lastError, iosSaveResult.error)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    if (setStringIfChanged(m_lastError, QString())) {
+        emit lastErrorChanged();
+    }
+
+    m_statusText = "Saved Compare To Album";
+    emit statusTextChanged();
+
+    if (!m_resultText.isEmpty()) {
+        m_resultText.append('\n');
+    }
+
+    if (iosSaveResult.assetLocalIdentifier.isEmpty()) {
+        m_resultText.append("Saved comparison image to iOS Photos.");
+    } else {
+        m_resultText.append(QString("Saved comparison image to iOS Photos: %1").arg(iosSaveResult.assetLocalIdentifier));
+    }
+    emit resultTextChanged();
+#else
+    const QString albumDirPath = defaultPicturesDirPath();
+    if (albumDirPath.isEmpty()) {
+        if (setStringIfChanged(m_lastError, "Cannot resolve pictures directory for album save.")) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    ImageService::SaveRequest request;
+    request.imageBytes = comparisonImageBytes;
+    request.outputFormat = "PNG";
+    request.outputDirPath = albumDirPath;
+    request.effectiveSeed = m_lastEffectiveSeed;
+    request.preset = collectPresetObject();
+
+    const ImageService::SaveResult saveResult = m_imageService.saveGeneratedImage(request);
+    if (!saveResult.ok) {
+        if (setStringIfChanged(m_lastError, saveResult.error)) {
+            emit lastErrorChanged();
+        }
+        m_statusText = "Save Failed";
+        emit statusTextChanged();
+        return;
+    }
+
+    if (setStringIfChanged(m_lastError, QString())) {
+        emit lastErrorChanged();
+    }
+
+    m_statusText = "Saved Compare To Album";
+    emit statusTextChanged();
+
+    if (!m_resultText.isEmpty()) {
+        m_resultText.append('\n');
+    }
+    m_resultText.append(QString("Saved comparison image: %1").arg(saveResult.filePath));
+    emit resultTextChanged();
+#endif
+}
+
 void MobileViewModel::savePresetToUrl(const QUrl &url)
 {
     QString filePath = pathFromUrl(url);
@@ -891,6 +1037,88 @@ bool MobileViewModel::updatePreviewImageUrl(const QByteArray &imageBytes, QStrin
     }
     m_previewImageUrl = previewUrl;
     emit previewImageUrlChanged();
+
+    return true;
+}
+
+bool MobileViewModel::buildComparisonImageBytes(const QString &originalImagePath,
+                                                QByteArray &comparisonImageBytes,
+                                                QString &error) const
+{
+    const QString normalizedOriginalPath = originalImagePath.trimmed();
+    if (normalizedOriginalPath.isEmpty()) {
+        error = "Original image is empty.";
+        return false;
+    }
+
+    if (m_lastGeneratedImageBytes.isEmpty()) {
+        error = "No generated image to compare. Please run inference first.";
+        return false;
+    }
+
+    QImage originalImage(normalizedOriginalPath);
+    if (originalImage.isNull()) {
+        error = QString("Failed to load original image: %1").arg(normalizedOriginalPath);
+        return false;
+    }
+
+    QImage generatedImage;
+    if (!generatedImage.loadFromData(m_lastGeneratedImageBytes)) {
+        error = "Failed to decode generated image for comparison save.";
+        return false;
+    }
+
+    const QSize clampedOriginalSize = clampResolutionKeepAspect(originalImage.width(), originalImage.height());
+    if (clampedOriginalSize.width() != originalImage.width() || clampedOriginalSize.height() != originalImage.height()) {
+        originalImage = originalImage.scaled(clampedOriginalSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    const QSize clampedGeneratedSize = clampResolutionKeepAspect(generatedImage.width(), generatedImage.height());
+    if (clampedGeneratedSize.width() != generatedImage.width() || clampedGeneratedSize.height() != generatedImage.height()) {
+        generatedImage = generatedImage.scaled(clampedGeneratedSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    const int targetHeight = qMax(originalImage.height(), generatedImage.height());
+    if (targetHeight <= 0) {
+        error = "Invalid image size for comparison.";
+        return false;
+    }
+
+    QImage leftImage = originalImage;
+    if (leftImage.height() != targetHeight) {
+        leftImage = leftImage.scaledToHeight(targetHeight, Qt::SmoothTransformation);
+    }
+
+    QImage rightImage = generatedImage;
+    if (rightImage.height() != targetHeight) {
+        rightImage = rightImage.scaledToHeight(targetHeight, Qt::SmoothTransformation);
+    }
+
+    const int padding = 12;
+    const int gap = 8;
+    const int canvasWidth = padding + leftImage.width() + gap + rightImage.width() + padding;
+    const int canvasHeight = padding + targetHeight + padding;
+
+    QImage canvas(canvasWidth, canvasHeight, QImage::Format_ARGB32);
+    canvas.fill(QColor("#111111"));
+
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const int imageTop = padding;
+    painter.drawImage(padding, imageTop, leftImage);
+    painter.drawImage(padding + leftImage.width() + gap, imageTop, rightImage);
+
+    painter.setPen(QColor("#4a4a4a"));
+    const int dividerX = padding + leftImage.width() + (gap / 2);
+    painter.drawLine(dividerX, imageTop, dividerX, imageTop + targetHeight);
+
+    comparisonImageBytes.clear();
+    QBuffer buffer(&comparisonImageBytes);
+    if (!buffer.open(QIODevice::WriteOnly) || !canvas.save(&buffer, "PNG")) {
+        error = "Failed to encode comparison image.";
+        return false;
+    }
 
     return true;
 }

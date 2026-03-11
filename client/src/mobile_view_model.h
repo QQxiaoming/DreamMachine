@@ -109,6 +109,8 @@ public:
     Q_INVOKABLE void runSimpleInference();
     Q_INVOKABLE void saveGeneratedImage();
     Q_INVOKABLE void saveGeneratedImageToAlbum();
+    Q_INVOKABLE void saveComparisonImage(const QUrl &originalImageUrl);
+    Q_INVOKABLE void saveComparisonImageToAlbum(const QUrl &originalImageUrl);
 
     Q_INVOKABLE void savePresetToUrl(const QUrl &url);
     Q_INVOKABLE void loadPresetFromUrl(const QUrl &url);
@@ -143,6 +145,9 @@ private:
     void refreshTargetSizeFromFirstImage();
     void setRunningState(bool value);
     bool updatePreviewImageUrl(const QByteArray &imageBytes, QString &error);
+    bool buildComparisonImageBytes(const QString &originalImagePath,
+                                   QByteArray &comparisonImageBytes,
+                                   QString &error) const;
     QString defaultPicturesDirPath() const;
 
     static QString pathFromUrl(const QUrl &url);

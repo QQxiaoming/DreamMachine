@@ -258,8 +258,8 @@ Item {
 
             Button {
                 text: page.originalImageUrl.length > 0
-                      ? "Replace Image"
-                      : (viewModel.mobilePlatform ? "Choose From Album" : "Choose Image")
+                        ? "Replace Image"
+                        : (viewModel.mobilePlatform ? "Choose From Album" : "Choose Image")
                 enabled: !viewModel.running
                 onClicked: inputImageDialog.open()
             }
@@ -267,7 +267,7 @@ Item {
             Button {
                 text: "Clear"
                 enabled: !viewModel.running
-                         && (page.originalImageUrl.length > 0 || page.generatedImageUrl.length > 0)
+                            && (page.originalImageUrl.length > 0 || page.generatedImageUrl.length > 0)
                 onClicked: {
                     page.originalImageUrl = ""
                     page.generatedImageUrl = ""
@@ -287,6 +287,21 @@ Item {
                         viewModel.saveGeneratedImageToAlbum()
                     } else {
                         viewModel.saveGeneratedImage()
+                    }
+                }
+            }
+
+            Button {
+                text: viewModel.mobilePlatform ? "Save Compare To Album" : "Save Compare"
+                enabled: !viewModel.running
+                            && viewModel.canSaveImage
+                            && page.originalImageUrl.length > 0
+                            && page.generatedImageUrl.length > 0
+                onClicked: {
+                    if (viewModel.mobilePlatform) {
+                        viewModel.saveComparisonImageToAlbum(page.originalImageUrl)
+                    } else {
+                        viewModel.saveComparisonImage(page.originalImageUrl)
                     }
                 }
             }
