@@ -100,6 +100,9 @@ ApplicationWindow {
         width: Math.min(shell.width * 0.74, 290)
         height: shell.height
         modal: true
+        Overlay.modal: Rectangle {
+            color: "#b3000000"
+        }
 
         background: Rectangle {
             gradient: Gradient {
@@ -109,13 +112,15 @@ ApplicationWindow {
             border.color: "#2e4358"
         }
 
-        ColumnLayout {
-            anchors.fill: parent
+        Column {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
             anchors.margins: 12
             spacing: 8
 
             Rectangle {
-                Layout.fillWidth: true
+                width: parent.width
                 radius: 12
                 color: "#1b2938"
                 border.color: "#334b62"
@@ -141,16 +146,22 @@ ApplicationWindow {
             }
 
             ItemDelegate {
-                Layout.fillWidth: true
-                text: shell.currentMode === "simple" ? "Simple (Current)" : "Simple"
+                width: parent.width
+                implicitHeight: 42
+                topPadding: 8
+                bottomPadding: 8
+                text: "Simple"
                 highlighted: shell.currentMode === "simple"
                 enabled: !shell.switchingMode
                 onClicked: shell.requestMode("simple")
             }
 
             ItemDelegate {
-                Layout.fillWidth: true
-                text: shell.currentMode === "advanced" ? "Advanced (Current)" : "Advanced"
+                width: parent.width
+                implicitHeight: 42
+                topPadding: 8
+                bottomPadding: 8
+                text: "Advanced"
                 highlighted: shell.currentMode === "advanced"
                 enabled: !shell.switchingMode
                 onClicked: shell.requestMode("advanced")
