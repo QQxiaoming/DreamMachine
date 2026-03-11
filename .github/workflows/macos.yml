@@ -43,11 +43,17 @@ jobs:
           ${{env.QT_PATH}}/bin/qt-cmake -B build/ -G Ninja \
             -DCMAKE_BUILD_TYPE=Release
           cmake --build build/
-          ${{env.QT_PATH}}/bin/macdeployqt ./build/DreamMachine.app
-          cp -r ./build/DreamMachine.app ../
-
+          cp ../script/create-dmg/build-dmg.sh ./build/build-dmg.sh
+          cp ../script/create-dmg/installer_background.png ./build/installer_background.png
+          cd ./build
+          ${{env.QT_PATH}}/bin/macdeployqt ./DreamMachine.app
+          otool -L ./DreamMachine.app/Contents/MacOS/DreamMachine
+          sudo ./build-dmg.sh DreamMachine
+          cd -
+          cp -r ./build/DreamMachine.dmg ../
+          
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
           path: |
-            DreamMachine.app
+            DreamMachine.dmg
