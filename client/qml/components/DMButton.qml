@@ -9,9 +9,12 @@ Button {
     property bool primary: false
     property bool danger: false
     property bool compact: false
-    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
-                                          ? ApplicationWindow.window.dmThemeName
-                                          : "ocean"
+    property string themeName: ""
+    readonly property string dmThemeName: themeName.length > 0
+                                          ? themeName
+                                          : ((ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                             ? ApplicationWindow.window.dmThemeName
+                                             : "ocean")
 
     implicitHeight: compact ? 34 : 42
     implicitWidth: Math.max(compact ? 90 : 112, contentItem.implicitWidth + leftPadding + rightPadding)

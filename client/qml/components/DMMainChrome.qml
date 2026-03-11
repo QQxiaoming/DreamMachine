@@ -1,10 +1,13 @@
 import QtQuick
+import QtQuick.Controls
 import "DMTheme.js" as DMTheme
 
 Item {
     id: chrome
 
-    property string themeName: "ocean"
+    property string themeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                               ? ApplicationWindow.window.dmThemeName
+                               : "ocean"
 
     readonly property color mainBgTop: DMTheme.colorFor(themeName, "mainBgTop")
     readonly property color mainBgMid: DMTheme.colorFor(themeName, "mainBgMid")

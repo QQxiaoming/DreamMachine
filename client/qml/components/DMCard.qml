@@ -4,9 +4,12 @@ import "DMTheme.js" as DMTheme
 
 Rectangle {
     id: card
-    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
-                                          ? ApplicationWindow.window.dmThemeName
-                                          : "ocean"
+    property string themeName: ""
+    readonly property string dmThemeName: themeName.length > 0
+                                          ? themeName
+                                          : ((ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                             ? ApplicationWindow.window.dmThemeName
+                                             : "ocean")
 
     property color toneTop: DMTheme.colorFor(card.dmThemeName, "cardToneTop")
     property color toneBottom: DMTheme.colorFor(card.dmThemeName, "cardToneBottom")

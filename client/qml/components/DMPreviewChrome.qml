@@ -1,10 +1,13 @@
 import QtQuick
+import QtQuick.Controls
 import "DMTheme.js" as DMTheme
 
 QtObject {
     id: chrome
 
-    property string themeName: "ocean"
+    property string themeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                               ? ApplicationWindow.window.dmThemeName
+                               : "ocean"
 
     readonly property color surfaceBorder: DMTheme.colorFor(themeName, "previewSurfaceBorder")
     readonly property color surfaceTop: DMTheme.colorFor(themeName, "previewSurfaceTop")

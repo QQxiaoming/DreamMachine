@@ -5,9 +5,12 @@ import "DMTheme.js" as DMTheme
 
 TextField {
     id: control
-    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
-                                          ? ApplicationWindow.window.dmThemeName
-                                          : "ocean"
+    property string themeName: ""
+    readonly property string dmThemeName: themeName.length > 0
+                                          ? themeName
+                                          : ((ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                             ? ApplicationWindow.window.dmThemeName
+                                             : "ocean")
 
     implicitHeight: 42
     leftPadding: 12

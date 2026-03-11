@@ -12,5 +12,9 @@
         <file alias="components/DMMainChrome.qml">qml/components/DMMainChrome.qml</file>
         <file alias="components/DMPreviewChrome.qml">qml/components/DMPreviewChrome.qml</file>
         <file alias="components/DMTheme.js">qml/components/DMTheme.js</file>
+        <file alias="components/themes/ocean.js">qml/components/themes/ocean.js</file>
+        <file alias="components/themes/sunset.js">qml/components/themes/sunset.js</file>
+        <file alias="components/themes/forest.js">qml/components/themes/forest.js</file>
+        <file alias="components/themes/graphite.js">qml/components/themes/graphite.js</file>
     </qresource>
 </RCC>

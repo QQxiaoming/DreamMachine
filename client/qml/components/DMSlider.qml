@@ -5,9 +5,12 @@ import "DMTheme.js" as DMTheme
 
 Slider {
     id: control
-    readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
-                                          ? ApplicationWindow.window.dmThemeName
-                                          : "ocean"
+    property string themeName: ""
+    readonly property string dmThemeName: themeName.length > 0
+                                          ? themeName
+                                          : ((ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
+                                             ? ApplicationWindow.window.dmThemeName
+                                             : "ocean")
 
     implicitHeight: 30
     padding: 0
