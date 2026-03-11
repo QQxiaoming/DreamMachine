@@ -9,6 +9,8 @@ ApplicationWindow {
     height: 900
     visible: true
     title: "DreamMachine Mobile"
+    font.family: Qt.platform.os === "ios" ? "Avenir Next" : "Noto Sans"
+    font.pixelSize: 14
 
     property string currentMode: viewModel.mobilePlatform ? "simple" : "advanced"
     property string pendingMode: currentMode
@@ -32,15 +34,44 @@ ApplicationWindow {
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0.0; color: "#0f1520" }
-            GradientStop { position: 1.0; color: "#111b28" }
+            GradientStop { position: 0.0; color: "#0d1724" }
+            GradientStop { position: 0.48; color: "#101f2f" }
+            GradientStop { position: 1.0; color: "#11273c" }
+        }
+
+        Rectangle {
+            anchors.right: parent.right
+            anchors.top: parent.top
+            width: parent.width * 0.55
+            height: parent.height * 0.36
+            radius: width * 0.5
+            color: "#1d455f"
+            opacity: 0.2
+            transform: Rotation {
+                origin.x: width * 0.5
+                origin.y: height * 0.5
+                angle: -18
+            }
+        }
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.6
+            height: parent.height * 0.26
+            radius: width * 0.5
+            color: "#0f7f67"
+            opacity: 0.12
         }
     }
 
     header: ToolBar {
         background: Rectangle {
-            color: "#162231"
-            border.color: "#2d4258"
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "#192e41" }
+                GradientStop { position: 1.0; color: "#132334" }
+            }
+            border.color: "#365470"
         }
 
         RowLayout {
@@ -62,8 +93,17 @@ ApplicationWindow {
 
                 background: Rectangle {
                     radius: 12
-                    color: menuButton.down ? "#35506a" : "#2a4054"
-                    border.color: "#4a6278"
+                    border.color: menuButton.down ? "#7ec2ea" : "#5f89ab"
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 0.0
+                            color: menuButton.down ? "#2f5f80" : "#3b6d90"
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: menuButton.down ? "#244c69" : "#2d5b7a"
+                        }
+                    }
                 }
             }
 
@@ -71,15 +111,24 @@ ApplicationWindow {
                 text: "DreamMachine"
                 font.pixelSize: 19
                 font.bold: true
-                color: "#b7c7d9"
+                color: "#d8e8f8"
             }
 
             Item { Layout.fillWidth: true }
 
             Rectangle {
                 radius: 10
-                color: viewModel.running ? "#1f4e3c" : "#253445"
-                border.color: viewModel.running ? "#3f8163" : "#45607a"
+                gradient: Gradient {
+                    GradientStop {
+                        position: 0.0
+                        color: viewModel.running ? "#1f6650" : "#2b4b67"
+                    }
+                    GradientStop {
+                        position: 1.0
+                        color: viewModel.running ? "#165241" : "#233d54"
+                    }
+                }
+                border.color: viewModel.running ? "#66d3aa" : "#6ba7d1"
                 implicitHeight: 30
                 implicitWidth: statusText.implicitWidth + 18
 
@@ -88,7 +137,7 @@ ApplicationWindow {
                     anchors.centerIn: parent
                     text: viewModel.running ? "Running" : "Ready"
                     font.pixelSize: 13
-                    color: "#d4e1ef"
+                    color: "#edf5ff"
                 }
             }
         }
@@ -106,10 +155,10 @@ ApplicationWindow {
 
         background: Rectangle {
             gradient: Gradient {
-                GradientStop { position: 0.0; color: "#111c2b" }
-                GradientStop { position: 1.0; color: "#0f1724" }
+                GradientStop { position: 0.0; color: "#13263a" }
+                GradientStop { position: 1.0; color: "#0f1d2c" }
             }
-            border.color: "#2e4358"
+            border.color: "#3e617f"
         }
 
         Column {
@@ -119,11 +168,9 @@ ApplicationWindow {
             anchors.margins: 12
             spacing: 8
 
-            Rectangle {
+            DMCard {
                 width: parent.width
-                radius: 12
-                color: "#1b2938"
-                border.color: "#334b62"
+                radius: 14
                 implicitHeight: 72
 
                 Column {
@@ -139,30 +186,24 @@ ApplicationWindow {
 
                     Label {
                         text: "Choose Simple or Advanced"
-                        color: "#9bb1c8"
+                        color: "#b4cade"
                         font.pixelSize: 12
                     }
                 }
             }
 
-            ItemDelegate {
+            DMButton {
                 width: parent.width
-                implicitHeight: 42
-                topPadding: 8
-                bottomPadding: 8
                 text: "Simple"
-                highlighted: shell.currentMode === "simple"
+                primary: shell.currentMode === "simple"
                 enabled: !shell.switchingMode
                 onClicked: shell.requestMode("simple")
             }
 
-            ItemDelegate {
+            DMButton {
                 width: parent.width
-                implicitHeight: 42
-                topPadding: 8
-                bottomPadding: 8
                 text: "Advanced"
-                highlighted: shell.currentMode === "advanced"
+                primary: shell.currentMode === "advanced"
                 enabled: !shell.switchingMode
                 onClicked: shell.requestMode("advanced")
             }

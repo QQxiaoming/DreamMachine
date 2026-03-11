@@ -28,12 +28,10 @@ Item {
         anchors.topMargin: 20
         spacing: 12
 
-        Rectangle {
+        DMCard {
             Layout.fillWidth: true
             implicitHeight: statusContent.implicitHeight + 20
-            radius: 14
-            color: "#1a2533"
-            border.color: "#34495d"
+            radius: 18
 
             ColumnLayout {
                 id: statusContent
@@ -44,14 +42,7 @@ Item {
                 Label {
                     text: "Status: " + viewModel.statusText
                     font.bold: true
-                    color: "#e3edf8"
-                }
-
-                Label {
-                    Layout.fillWidth: true
-                    wrapMode: Text.Wrap
-                    color: "#9bb1c8"
-                    text: "Select one input image. The app will run using your current Advanced mode parameters. Swipe left/right in preview to switch between Original and Generated."
+                    color: "#f0f7ff"
                 }
 
                 Label {
@@ -64,19 +55,20 @@ Item {
             }
         }
 
-        Rectangle {
+        DMCard {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            radius: 14
-            color: "#1a2533"
-            border.color: "#34495d"
+            radius: 18
 
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 10
-                radius: 10
-                color: "#121b26"
-                border.color: "#34495d"
+                radius: 14
+                border.color: "#3b5a76"
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: "#172938" }
+                    GradientStop { position: 1.0; color: "#132435" }
+                }
 
                 SwipeView {
                     id: previewSwipe
@@ -96,8 +88,11 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                color: "#273a4d"
-                                border.color: "#425971"
+                                border.color: "#67a7d4"
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#2f5d7f" }
+                                    GradientStop { position: 1.0; color: "#274f6d" }
+                                }
                                 implicitWidth: originalBadgeLabel.implicitWidth + 14
                                 implicitHeight: originalBadgeLabel.implicitHeight + 6
 
@@ -158,8 +153,11 @@ Item {
                                 anchors.top: parent.top
                                 anchors.margins: 8
                                 radius: 8
-                                color: "#273a4d"
-                                border.color: "#425971"
+                                border.color: "#67a7d4"
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#2f5d7f" }
+                                    GradientStop { position: 1.0; color: "#274f6d" }
+                                }
                                 implicitWidth: generatedBadgeLabel.implicitWidth + 14
                                 implicitHeight: generatedBadgeLabel.implicitHeight + 6
 
@@ -218,17 +216,14 @@ Item {
                     anchors.bottomMargin: 8
                     count: 2
                     currentIndex: previewSwipe.currentIndex
-                }
 
-                Label {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 28
-                    horizontalAlignment: Text.AlignHCenter
-                    text: "Swipe left/right to switch, tap image for fullscreen"
-                    color: "#8ea5bb"
-                    font.pixelSize: 12
+                    delegate: Rectangle {
+                        implicitWidth: 9
+                        implicitHeight: 9
+                        radius: 5
+                        color: index === previewSwipe.currentIndex ? "#63ddbc" : "#48637c"
+                        opacity: 0.95
+                    }
                 }
 
                 BusyIndicator {
@@ -245,8 +240,10 @@ Item {
                     anchors.margins: 8
                     color: "#ff7f90"
                     wrapMode: Text.Wrap
-                    visible: page.currentPreviewError.length > 0
-                    text: page.currentPreviewError
+                    visible: page.currentPreviewError.length > 0 || viewModel.lastError.length > 0
+                    text: page.currentPreviewError.length > 0
+                          ? page.currentPreviewError
+                          : viewModel.lastError
                 }
 
             }
@@ -256,18 +253,28 @@ Item {
             Layout.fillWidth: true
             spacing: 8
 
-            Button {
-                text: page.originalImageUrl.length > 0
-                        ? "Replace Image"
-                        : (viewModel.mobilePlatform ? "Choose From Album" : "Choose Image")
+            DMButton {
+                Layout.fillWidth: true
+                text: page.originalImageUrl.length > 0 ? "\u21BB" : "\uff0b"
+                primary: true
+                font.pixelSize: 20
                 enabled: !viewModel.running
+                ToolTip.visible: hovered
+                ToolTip.text: page.originalImageUrl.length > 0
+                              ? "Replace image"
+                              : (viewModel.mobilePlatform ? "Choose from album" : "Choose image")
                 onClicked: inputImageDialog.open()
             }
 
-            Button {
-                text: "Clear"
+            DMButton {
+                Layout.fillWidth: true
+                text: "\u2715"
+                danger: true
+                font.pixelSize: 20
                 enabled: !viewModel.running
                             && (page.originalImageUrl.length > 0 || page.generatedImageUrl.length > 0)
+                ToolTip.visible: hovered
+                ToolTip.text: "Clear images"
                 onClicked: {
                     page.originalImageUrl = ""
                     page.generatedImageUrl = ""
@@ -279,9 +286,13 @@ Item {
                 }
             }
 
-            Button {
-                text: viewModel.mobilePlatform ? "Save To Album" : "Save Image"
+            DMButton {
+                Layout.fillWidth: true
+                text: "\u2193"
+                font.pixelSize: 20
                 enabled: !viewModel.running && viewModel.canSaveImage
+                ToolTip.visible: hovered
+                ToolTip.text: viewModel.mobilePlatform ? "Save to album" : "Save image"
                 onClicked: {
                     if (viewModel.mobilePlatform) {
                         viewModel.saveGeneratedImageToAlbum()
@@ -291,12 +302,16 @@ Item {
                 }
             }
 
-            Button {
-                text: viewModel.mobilePlatform ? "Save Compare To Album" : "Save Compare"
+            DMButton {
+                Layout.fillWidth: true
+                text: "\u21C4"
+                font.pixelSize: 20
                 enabled: !viewModel.running
                             && viewModel.canSaveImage
                             && page.originalImageUrl.length > 0
                             && page.generatedImageUrl.length > 0
+                ToolTip.visible: hovered
+                ToolTip.text: viewModel.mobilePlatform ? "Save compare to album" : "Save compare"
                 onClicked: {
                     if (viewModel.mobilePlatform) {
                         viewModel.saveComparisonImageToAlbum(page.originalImageUrl)

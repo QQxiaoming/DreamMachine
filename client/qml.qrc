@@ -3,5 +3,11 @@
         <file alias="Main.qml">qml/Main.qml</file>
         <file alias="SimplePage.qml">qml/SimplePage.qml</file>
         <file alias="AdvancedPage.qml">qml/AdvancedPage.qml</file>
+        <file alias="DMCard.qml">qml/DMCard.qml</file>
+        <file alias="DMButton.qml">qml/DMButton.qml</file>
+        <file alias="DMTextField.qml">qml/DMTextField.qml</file>
+        <file alias="DMTextArea.qml">qml/DMTextArea.qml</file>
+        <file alias="DMSpinBox.qml">qml/DMSpinBox.qml</file>
+        <file alias="DMSlider.qml">qml/DMSlider.qml</file>
     </qresource>
 </RCC>

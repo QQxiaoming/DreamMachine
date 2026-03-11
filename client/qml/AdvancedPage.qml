@@ -20,14 +20,12 @@ Item {
             width: page.width
             spacing: 12
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: statusCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: statusCardContent
@@ -38,7 +36,7 @@ Item {
                     Label {
                         text: "Status: " + viewModel.statusText
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
                     Label {
@@ -50,14 +48,12 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: promptCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: promptCardContent
@@ -68,10 +64,10 @@ Item {
                     Label {
                         text: "Prompt"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
-                    TextArea {
+                    DMTextArea {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 120
                         placeholderText: "Describe what you want to generate"
@@ -82,10 +78,10 @@ Item {
 
                     Label {
                         text: "Negative Prompt"
-                        color: "#9bb1c8"
+                        color: "#b7cbde"
                     }
 
-                    TextArea {
+                    DMTextArea {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 100
                         placeholderText: "Optional"
@@ -96,14 +92,12 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: inputCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: inputCardContent
@@ -117,28 +111,32 @@ Item {
                         Label {
                             text: "Input Images"
                             font.bold: true
-                            color: "#e3edf8"
+                            color: "#f0f7ff"
                         }
 
                         Item { Layout.fillWidth: true }
 
                         Label {
                             text: viewModel.inputImages.length + "/4"
-                            color: "#9bb1c8"
+                            color: "#b7cbde"
                         }
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
 
-                        Button {
+                        DMButton {
+                            Layout.fillWidth: true
                             text: viewModel.mobilePlatform ? "Add From Album" : "Add"
+                            primary: true
                             enabled: !viewModel.running && viewModel.inputImages.length < 4
                             onClicked: inputImageDialog.open()
                         }
 
-                        Button {
+                        DMButton {
+                            Layout.fillWidth: true
                             text: "Clear"
+                            danger: true
                             enabled: !viewModel.running && viewModel.inputImages.length > 0
                             onClicked: viewModel.clearInputImages()
                         }
@@ -152,9 +150,12 @@ Item {
                             required property int index
 
                             Layout.fillWidth: true
-                            radius: 10
-                            color: "#1f2c3b"
-                            border.color: "#395068"
+                            radius: 12
+                            border.color: "#4a6b87"
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "#21394d" }
+                                GradientStop { position: 1.0; color: "#1a2e40" }
+                            }
                             implicitHeight: row.implicitHeight + 10
 
                             RowLayout {
@@ -167,11 +168,13 @@ Item {
                                     Layout.fillWidth: true
                                     text: modelData
                                     elide: Text.ElideMiddle
-                                    color: "#d6e3f3"
+                                    color: "#e0edf9"
                                 }
 
-                                ToolButton {
+                                DMButton {
+                                    compact: true
                                     text: "Remove"
+                                    danger: true
                                     enabled: !viewModel.running
                                     onClicked: viewModel.removeInputImage(index)
                                 }
@@ -181,14 +184,12 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: settingsCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: settingsCardContent
@@ -199,7 +200,7 @@ Item {
                     Label {
                         text: "Generation Settings"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
                     RowLayout {
@@ -208,10 +209,10 @@ Item {
 
                         Label {
                             text: "Width"
-                            color: "#9bb1c8"
+                            color: "#b7cbde"
                         }
 
-                        SpinBox {
+                        DMSpinBox {
                             from: 0
                             to: 16384
                             editable: true
@@ -222,10 +223,10 @@ Item {
 
                         Label {
                             text: "Height"
-                            color: "#9bb1c8"
+                            color: "#b7cbde"
                         }
 
-                        SpinBox {
+                        DMSpinBox {
                             from: 0
                             to: 16384
                             editable: true
@@ -239,9 +240,9 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Seed"; color: "#9bb1c8" }
+                        Label { text: "Seed"; color: "#b7cbde" }
 
-                        TextField {
+                        DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
                             text: viewModel.seedText
@@ -255,9 +256,9 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Steps"; color: "#9bb1c8" }
+                        Label { text: "Steps"; color: "#b7cbde" }
 
-                        SpinBox {
+                        DMSpinBox {
                             from: 1
                             to: 500
                             editable: true
@@ -268,10 +269,10 @@ Item {
 
                         Label {
                             text: "CFG"
-                            color: "#9bb1c8"
+                            color: "#b7cbde"
                         }
 
-                        Slider {
+                        DMSlider {
                             Layout.fillWidth: true
                             from: 0.0
                             to: 100.0
@@ -282,9 +283,38 @@ Item {
                             onValueChanged: if (pressed) viewModel.cfg = value
                         }
 
-                        Label {
-                            text: Number(viewModel.cfg).toFixed(1)
-                            color: "#d6e3f3"
+                        DMTextField {
+                            id: cfgInput
+                            Layout.preferredWidth: 76
+                            enabled: !viewModel.running
+                            horizontalAlignment: Text.AlignHCenter
+                            inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            validator: DoubleValidator {
+                                bottom: 0.0
+                                top: 100.0
+                                decimals: 1
+                                notation: DoubleValidator.StandardNotation
+                            }
+
+                            Binding {
+                                target: cfgInput
+                                property: "text"
+                                value: Number(viewModel.cfg).toFixed(1)
+                                when: !cfgInput.activeFocus
+                            }
+
+                            onEditingFinished: {
+                                let parsed = Number(text)
+                                if (!isFinite(parsed)) {
+                                    text = Number(viewModel.cfg).toFixed(1)
+                                    return
+                                }
+
+                                parsed = Math.max(0.0, Math.min(100.0, parsed))
+                                parsed = Math.round(parsed * 10) / 10
+                                viewModel.cfg = parsed
+                                text = Number(parsed).toFixed(1)
+                            }
                         }
                     }
 
@@ -294,10 +324,10 @@ Item {
 
                         Label {
                             text: "Denoise"
-                            color: "#9bb1c8"
+                            color: "#b7cbde"
                         }
 
-                        Slider {
+                        DMSlider {
                             Layout.fillWidth: true
                             from: 0.0
                             to: 1.0
@@ -308,9 +338,38 @@ Item {
                             onValueChanged: if (pressed) viewModel.denoise = value
                         }
 
-                        Label {
-                            text: Number(viewModel.denoise).toFixed(2)
-                            color: "#d6e3f3"
+                        DMTextField {
+                            id: denoiseInput
+                            Layout.preferredWidth: 76
+                            enabled: !viewModel.running
+                            horizontalAlignment: Text.AlignHCenter
+                            inputMethodHints: Qt.ImhFormattedNumbersOnly
+                            validator: DoubleValidator {
+                                bottom: 0.0
+                                top: 1.0
+                                decimals: 2
+                                notation: DoubleValidator.StandardNotation
+                            }
+
+                            Binding {
+                                target: denoiseInput
+                                property: "text"
+                                value: Number(viewModel.denoise).toFixed(2)
+                                when: !denoiseInput.activeFocus
+                            }
+
+                            onEditingFinished: {
+                                let parsed = Number(text)
+                                if (!isFinite(parsed)) {
+                                    text = Number(viewModel.denoise).toFixed(2)
+                                    return
+                                }
+
+                                parsed = Math.max(0.0, Math.min(1.0, parsed))
+                                parsed = Math.round(parsed * 100) / 100
+                                viewModel.denoise = parsed
+                                text = Number(parsed).toFixed(2)
+                            }
                         }
                     }
 
@@ -318,8 +377,8 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Sampler"; color: "#9bb1c8" }
-                        TextField {
+                        Label { text: "Sampler"; color: "#b7cbde" }
+                        DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
                             text: viewModel.samplerName
@@ -331,8 +390,8 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Scheduler"; color: "#9bb1c8" }
-                        TextField {
+                        Label { text: "Scheduler"; color: "#b7cbde" }
+                        DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
                             text: viewModel.scheduler
@@ -342,14 +401,12 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: outputCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: outputCardContent
@@ -360,14 +417,14 @@ Item {
                     Label {
                         text: "Output + Server"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
                     RowLayout {
                         Layout.fillWidth: true
                         visible: !viewModel.mobilePlatform
 
-                        TextField {
+                        DMTextField {
                             Layout.fillWidth: true
                             text: viewModel.outputDir
                             placeholderText: "Output directory"
@@ -375,7 +432,8 @@ Item {
                             onTextChanged: viewModel.outputDir = text
                         }
 
-                        Button {
+                        DMButton {
+                            compact: true
                             text: "Dir"
                             enabled: !viewModel.running
                             onClicked: outputFolderDialog.open()
@@ -386,7 +444,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#9bb1c8"
+                        color: "#b7cbde"
                         text: "Album source: " + viewModel.photoPickerDirUrl.toString()
                     }
 
@@ -394,7 +452,7 @@ Item {
                         visible: viewModel.mobilePlatform
                         Layout.fillWidth: true
                         wrapMode: Text.Wrap
-                        color: "#9bb1c8"
+                        color: "#b7cbde"
                         text: "Save path: " + viewModel.picturesDirUrl.toString() + "/DreamMachine"
                     }
 
@@ -402,16 +460,16 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Label { text: "Host"; color: "#9bb1c8" }
-                        TextField {
+                        Label { text: "Host"; color: "#b7cbde" }
+                        DMTextField {
                             Layout.fillWidth: true
                             enabled: !viewModel.running
                             text: viewModel.host
                             onTextChanged: viewModel.host = text
                         }
 
-                        Label { text: "Port"; color: "#9bb1c8" }
-                        SpinBox {
+                        Label { text: "Port"; color: "#b7cbde" }
+                        DMSpinBox {
                             from: 1
                             to: 65535
                             editable: true
@@ -425,19 +483,23 @@ Item {
                         Layout.fillWidth: true
                         spacing: 8
 
-                        Button {
+                        DMButton {
+                            Layout.fillWidth: true
                             text: "Load Preset"
                             enabled: !viewModel.running
                             onClicked: presetLoadDialog.open()
                         }
 
-                        Button {
+                        DMButton {
+                            Layout.fillWidth: true
                             text: "Save Preset"
                             enabled: !viewModel.running
                             onClicked: presetSaveDialog.open()
                         }
 
-                        Button {
+                        DMButton {
+                            Layout.fillWidth: true
+                            primary: true
                             text: viewModel.mobilePlatform ? "Save To Album" : "Save Image"
                             enabled: viewModel.canSaveImage
                             onClicked: {
@@ -452,14 +514,12 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 implicitHeight: previewCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: previewCardContent
@@ -470,15 +530,18 @@ Item {
                     Label {
                         text: "Preview"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 260
-                        radius: 10
-                        color: "#121b26"
-                        border.color: "#34495d"
+                        radius: 14
+                        border.color: "#3b5a76"
+                        gradient: Gradient {
+                            GradientStop { position: 0.0; color: "#172938" }
+                            GradientStop { position: 1.0; color: "#132435" }
+                        }
 
                         Image {
                             id: previewImage
@@ -525,15 +588,13 @@ Item {
                 }
             }
 
-            Rectangle {
+            DMCard {
                 Layout.fillWidth: true
                 Layout.leftMargin: 12
                 Layout.rightMargin: 12
                 Layout.bottomMargin: 8
                 implicitHeight: resultCardContent.implicitHeight + 24
-                radius: 14
-                color: "#1a2533"
-                border.color: "#34495d"
+                radius: 18
 
                 ColumnLayout {
                     id: resultCardContent
@@ -544,10 +605,10 @@ Item {
                     Label {
                         text: "Result"
                         font.bold: true
-                        color: "#e3edf8"
+                        color: "#f0f7ff"
                     }
 
-                    TextArea {
+                    DMTextArea {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 240
                         readOnly: true
@@ -559,7 +620,7 @@ Item {
         }
     }
 
-    Rectangle {
+    DMCard {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -567,18 +628,17 @@ Item {
         anchors.rightMargin: 12
         anchors.bottomMargin: 12
         implicitHeight: runBarContent.implicitHeight + 20
-        radius: 14
-        color: "#1a2533"
-        border.color: "#34495d"
+        radius: 18
 
         RowLayout {
             id: runBarContent
             anchors.fill: parent
             anchors.margins: 10
 
-            Button {
+            DMButton {
                 Layout.fillWidth: true
                 text: viewModel.running ? "Running" : "Run"
+                primary: true
                 enabled: !viewModel.running
                 onClicked: viewModel.runInference()
             }
