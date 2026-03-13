@@ -380,7 +380,10 @@ class DreamMachineService:
 
         output_image_bytes = _build_mock_image_bytes(width, height, seed, output_format)
         output_image_b64 = base64.b64encode(output_image_bytes).decode("ascii")
-
+        
+        import time
+        time.sleep(10)
+        
         return {
             "ok": True,
             "output_image_b64": output_image_b64,

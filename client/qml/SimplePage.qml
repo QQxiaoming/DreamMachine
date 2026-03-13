@@ -241,12 +241,6 @@ Item {
                     }
                 }
 
-                BusyIndicator {
-                    anchors.centerIn: parent
-                    running: viewModel.running
-                    visible: viewModel.running
-                }
-
                 Label {
                     id: previewErrorLabel
                     anchors.left: parent.left
@@ -347,6 +341,7 @@ Item {
                 page.generatedImageUrl = viewModel.previewImageUrl
                 page.generatedPreviewError = ""
                 page.waitingResult = false
+                previewSwipe.currentIndex = 1
             }
         }
 

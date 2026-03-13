@@ -128,6 +128,31 @@ ApplicationWindow {
                     text: viewModel.running ? "Running" : "Ready"
                     font.pixelSize: 13
                     color: mainChrome.statusText
+
+                    SequentialAnimation on opacity {
+                        running: viewModel.running
+                        loops: Animation.Infinite
+
+                        NumberAnimation {
+                            from: 1.0
+                            to: 0.62
+                            duration: 520
+                            easing.type: Easing.InOutQuad
+                        }
+
+                        NumberAnimation {
+                            from: 0.62
+                            to: 1.0
+                            duration: 520
+                            easing.type: Easing.InOutQuad
+                        }
+
+                        onRunningChanged: {
+                            if (!running) {
+                                statusText.opacity = 1.0
+                            }
+                        }
+                    }
                 }
             }
         }

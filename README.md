@@ -4,8 +4,6 @@ DreamMachine 是一个本地图片生成/编辑工具链：
 - 客户端：Qt 6（桌面默认 QWidget，支持 QML 预览/移动端 UI）
 - 服务端：Python + ComfyUI（TCP 推理服务）
 
-![DreamMachine Screenshot](dreammachine_20260311_101829.png)
-
 ## 快速开始（先跑通）
 
 ### 1. 拉取代码与子模块
