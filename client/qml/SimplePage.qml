@@ -14,8 +14,6 @@ Item {
     property string generatedImageUrl: ""
     property bool waitingResult: false
     property bool previewFullscreen: false
-    property real previewFullscreenScale: 1.0
-    property real previewPinchStartScale: 1.0
     property string originalPreviewError: ""
     property string generatedPreviewError: ""
     readonly property string currentPreviewUrl: previewSwipe.currentIndex === 0
@@ -390,69 +388,12 @@ Item {
         }
     }
 
-    Rectangle {
+    DMFullscreenImageViewer {
         anchors.fill: parent
-        visible: page.previewFullscreen
-        z: 1000
-        color: previewChrome.fullscreenOverlay
-
-        onVisibleChanged: {
-            if (visible) {
-                page.previewFullscreenScale = 1.0
-                page.previewPinchStartScale = 1.0
-            }
-        }
-
-        Image {
-            anchors.fill: parent
-            anchors.margins: 16
-            cache: false
-            smooth: true
-            fillMode: Image.PreserveAspectFit
-            source: page.currentPreviewUrl
-            visible: page.currentPreviewUrl.length > 0
-            scale: page.previewFullscreenScale
-        }
-
-        PinchArea {
-            anchors.fill: parent
-            enabled: page.currentPreviewUrl.length > 0
-
-            onPinchStarted: {
-                page.previewPinchStartScale = page.previewFullscreenScale
-            }
-
-            onPinchUpdated: {
-                const scaled = page.previewPinchStartScale * pinch.scale
-                page.previewFullscreenScale = Math.max(1.0, Math.min(4.0, scaled))
-            }
-        }
-
-        RoundButton {
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: 20
-            anchors.rightMargin: 20
-            text: "\u2715"
-            visible: page.currentPreviewUrl.length > 0
-            z: 2
-            onClicked: page.previewFullscreen = false
-        }
-
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 24
-            color: previewChrome.fullscreenHint
-            text: "Pinch to zoom, tap image or X to exit fullscreen"
-            visible: page.currentPreviewUrl.length > 0
-        }
-
-        TapHandler {
-            enabled: page.currentPreviewUrl.length > 0
-            acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
-            gesturePolicy: TapHandler.ReleaseWithinBounds
-            onTapped: page.previewFullscreen = false
-        }
+        active: page.previewFullscreen
+        imageUrl: page.currentPreviewUrl
+        overlayColor: previewChrome.fullscreenOverlay
+        hintColor: previewChrome.fullscreenHint
+        onCloseRequested: page.previewFullscreen = false
     }
 }

@@ -10,8 +10,6 @@ Item {
     id: page
     anchors.fill: parent
     property bool previewFullscreen: false
-    property real previewFullscreenScale: 1.0
-    property real previewPinchStartScale: 1.0
     readonly property string dmThemeName: (ApplicationWindow.window && ApplicationWindow.window.dmThemeName)
                                           ? ApplicationWindow.window.dmThemeName
                                           : "ocean"
@@ -701,55 +699,12 @@ Item {
         onAccepted: viewModel.savePresetToUrl(selectedFile)
     }
 
-    Rectangle {
+    DMFullscreenImageViewer {
         anchors.fill: parent
-        visible: page.previewFullscreen
-        z: 1000
-        color: previewChrome.fullscreenOverlay
-
-        onVisibleChanged: {
-            if (visible) {
-                page.previewFullscreenScale = 1.0
-                page.previewPinchStartScale = 1.0
-            }
-        }
-
-        Image {
-            anchors.fill: parent
-            anchors.margins: 16
-            cache: false
-            smooth: true
-            fillMode: Image.PreserveAspectFit
-            source: viewModel.previewImageUrl
-            visible: viewModel.previewImageUrl.length > 0
-            scale: page.previewFullscreenScale
-        }
-
-        PinchArea {
-            anchors.fill: parent
-            enabled: viewModel.previewImageUrl.length > 0
-
-            onPinchStarted: {
-                page.previewPinchStartScale = page.previewFullscreenScale
-            }
-
-            onPinchUpdated: {
-                const scaled = page.previewPinchStartScale * pinch.scale
-                page.previewFullscreenScale = Math.max(1.0, Math.min(4.0, scaled))
-            }
-        }
-
-        Label {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 24
-            color: previewChrome.fullscreenHint
-            text: "Pinch to zoom, tap image to exit fullscreen"
-            visible: viewModel.previewImageUrl.length > 0
-        }
-
-        TapHandler {
-            onTapped: page.previewFullscreen = false
-        }
+        active: page.previewFullscreen
+        imageUrl: viewModel.previewImageUrl
+        overlayColor: previewChrome.fullscreenOverlay
+        hintColor: previewChrome.fullscreenHint
+        onCloseRequested: page.previewFullscreen = false
     }
 }
