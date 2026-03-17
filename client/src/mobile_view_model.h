@@ -112,6 +112,7 @@ public:
     Q_INVOKABLE void saveComparisonImage(const QUrl &originalImageUrl);
     Q_INVOKABLE void saveComparisonImageToAlbum(const QUrl &originalImageUrl);
 
+    Q_INVOKABLE void savePresetToDefaultPath();
     Q_INVOKABLE void savePresetToUrl(const QUrl &url);
     Q_INVOKABLE void loadPresetFromUrl(const QUrl &url);
 

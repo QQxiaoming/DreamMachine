@@ -510,7 +510,13 @@ Item {
                             Layout.fillWidth: true
                             text: "Save Preset"
                             enabled: !viewModel.running
-                            onClicked: presetSaveDialog.open()
+                            onClicked: {
+                                if (Qt.platform.os === "ios") {
+                                    viewModel.savePresetToDefaultPath()
+                                } else {
+                                    presetSaveDialog.open()
+                                }
+                            }
                         }
 
                         DMButton {
@@ -692,8 +698,7 @@ Item {
     FileDialog {
         id: presetSaveDialog
         title: "Save preset"
-        // iOS SaveFile falls back to the Qt dialog; OpenFile keeps the native picker.
-        fileMode: Qt.platform.os === "ios" ? FileDialog.OpenFile : FileDialog.SaveFile
+        fileMode: FileDialog.SaveFile
         defaultSuffix: "json"
         nameFilters: ["JSON (*.json)", "All files (*)"]
         onAccepted: viewModel.savePresetToUrl(selectedFile)

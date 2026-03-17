@@ -52,6 +52,35 @@ QUrl locationStringToUrl(const QString &value)
     return QUrl::fromLocalFile(trimmed);
 }
 
+QString defaultWritablePresetDirPath()
+{
+#if defined(Q_OS_IOS)
+    const QString documentsPath =
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation).trimmed();
+    if (!documentsPath.isEmpty()) {
+        return QDir(documentsPath).filePath("DreamMachine");
+    }
+#endif
+
+    QString appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).trimmed();
+    if (appDataPath.isEmpty()) {
+        appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation).trimmed();
+    }
+    if (appDataPath.isEmpty()) {
+        appDataPath = QDir::homePath();
+    }
+    if (appDataPath.isEmpty()) {
+        appDataPath = QDir::currentPath();
+    }
+
+    return QDir(appDataPath).filePath("DreamMachine");
+}
+
+QString defaultWritablePresetFilePath()
+{
+    return QDir(defaultWritablePresetDirPath()).filePath("dreammachine_preset.json");
+}
+
 } // namespace
 
 MobileViewModel::MobileViewModel(QObject *parent)
@@ -892,32 +921,56 @@ void MobileViewModel::saveComparisonImageToAlbum(const QUrl &originalImageUrl)
 #endif
 }
 
+void MobileViewModel::savePresetToDefaultPath()
+{
+    savePresetToUrl(QUrl::fromLocalFile(defaultWritablePresetFilePath()));
+}
+
 void MobileViewModel::savePresetToUrl(const QUrl &url)
 {
-    QString filePath = pathFromUrl(url);
+    QString filePath = pathFromUrl(url).trimmed();
     if (filePath.isEmpty()) {
-        if (setStringIfChanged(m_lastError, "Preset path is empty.")) {
-            emit lastErrorChanged();
-        }
-        return;
+        filePath = defaultWritablePresetFilePath();
     }
 
     if (QFileInfo(filePath).suffix().isEmpty()) {
         filePath += ".json";
     }
 
-    QString error;
-    if (!m_presetStorage.saveToFile(filePath, collectPresetObject(), error)) {
-        if (setStringIfChanged(m_lastError, error)) {
-            emit lastErrorChanged();
+    auto savePresetFile = [this](const QString &path, QString &error) -> bool {
+        const QFileInfo fileInfo(path);
+        const QString dirPath = fileInfo.absolutePath();
+        if (!dirPath.isEmpty()) {
+            QDir dir;
+            if (!dir.mkpath(dirPath)) {
+                error = QString("Cannot create preset directory: %1").arg(dirPath);
+                return false;
+            }
         }
-        m_statusText = "Save Preset Failed";
-        emit statusTextChanged();
-        return;
+
+        return m_presetStorage.saveToFile(path, collectPresetObject(), error);
+    };
+
+    QString error;
+    QString savedPath = filePath;
+    if (!savePresetFile(savedPath, error)) {
+        const QString fallbackPath = defaultWritablePresetFilePath();
+        if (QFileInfo(savedPath).absoluteFilePath() != QFileInfo(fallbackPath).absoluteFilePath()
+            && savePresetFile(fallbackPath, error)) {
+            savedPath = fallbackPath;
+        } else {
+            if (setStringIfChanged(m_lastError, error)) {
+                emit lastErrorChanged();
+            }
+            m_statusText = "Save Preset Failed";
+            emit statusTextChanged();
+            return;
+        }
     }
 
     GlobalSetting settings;
-    settings.setValue("Global/presetPath", QFileInfo(filePath).absolutePath());
+    settings.setValue("Global/presetPath", QFileInfo(savedPath).absolutePath());
+    settings.setValue("Global/lastLoadedPresetFilePath", QFileInfo(savedPath).absoluteFilePath());
 
     if (setStringIfChanged(m_lastError, QString())) {
         emit lastErrorChanged();
@@ -925,6 +978,12 @@ void MobileViewModel::savePresetToUrl(const QUrl &url)
 
     m_statusText = "Preset Saved";
     emit statusTextChanged();
+
+    if (!m_resultText.isEmpty()) {
+        m_resultText.append('\n');
+    }
+    m_resultText.append(QString("Saved preset: %1").arg(savedPath));
+    emit resultTextChanged();
 }
 
 void MobileViewModel::loadPresetFromUrl(const QUrl &url)
@@ -1305,7 +1364,10 @@ QString MobileViewModel::defaultPresetFilePath() const
         return QFileInfo(lastLoadedFile).absoluteFilePath();
     }
 
-    const QString lastPath = settings.value("Global/presetPath", QDir::current().absolutePath()).toString();
+    QString lastPath = settings.value("Global/presetPath", QString()).toString().trimmed();
+    if (lastPath.isEmpty()) {
+        lastPath = defaultWritablePresetDirPath();
+    }
     return QDir(lastPath).absoluteFilePath("dreammachine_preset.json");
 }
 

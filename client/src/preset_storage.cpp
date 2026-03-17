@@ -1,5 +1,6 @@
 #include "preset_storage.h"
 
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
@@ -22,15 +23,25 @@ bool PresetStorage::saveToFile(const QString &filePath, const QJsonObject &prese
     root["version"] = 1;
     root["preset"] = preset;
 
+    const QFileInfo fileInfo(filePath);
+    const QString directoryPath = fileInfo.absolutePath();
+    if (!directoryPath.isEmpty()) {
+        QDir dir;
+        if (!dir.mkpath(directoryPath)) {
+            error = QString("Cannot create preset directory: %1").arg(directoryPath);
+            return false;
+        }
+    }
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        error = QString("Cannot open file for writing: %1").arg(filePath);
+        error = QString("Cannot open file for writing: %1 (%2)").arg(filePath, file.errorString());
         return false;
     }
 
     const QByteArray data = QJsonDocument(root).toJson(QJsonDocument::Indented);
     if (file.write(data) != data.size()) {
-        error = QString("Failed to write preset file: %1").arg(filePath);
+        error = QString("Failed to write preset file: %1 (%2)").arg(filePath, file.errorString());
         return false;
     }
 
