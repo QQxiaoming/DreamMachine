@@ -4,14 +4,104 @@
 #include "globalsetting.h"
 
 #include <QDir>
+#include <QBuffer>
+#include <QColor>
+#include <QImage>
 #include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QPainter>
 #include <QPixmap>
+#include <QPushButton>
 #include <QSpinBox>
 #include <QTextEdit>
+
+namespace {
+bool buildComparisonImageBytes(const QString &originalImagePath,
+                               const QByteArray &generatedImageBytes,
+                               QByteArray &comparisonImageBytes,
+                               QString &error)
+{
+    const QString normalizedOriginalPath = originalImagePath.trimmed();
+    if (normalizedOriginalPath.isEmpty()) {
+        error = "Original image is empty.";
+        return false;
+    }
+
+    if (generatedImageBytes.isEmpty()) {
+        error = "No generated image to compare. Please run inference first.";
+        return false;
+    }
+
+    QImage originalImage(normalizedOriginalPath);
+    if (originalImage.isNull()) {
+        error = QString("Failed to load original image: %1").arg(normalizedOriginalPath);
+        return false;
+    }
+
+    QImage generatedImage;
+    if (!generatedImage.loadFromData(generatedImageBytes)) {
+        error = "Failed to decode generated image for comparison save.";
+        return false;
+    }
+
+    const QSize clampedOriginalSize = clampResolutionKeepAspect(originalImage.width(), originalImage.height());
+    if (clampedOriginalSize.width() != originalImage.width() || clampedOriginalSize.height() != originalImage.height()) {
+        originalImage = originalImage.scaled(clampedOriginalSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    const QSize clampedGeneratedSize = clampResolutionKeepAspect(generatedImage.width(), generatedImage.height());
+    if (clampedGeneratedSize.width() != generatedImage.width() || clampedGeneratedSize.height() != generatedImage.height()) {
+        generatedImage = generatedImage.scaled(clampedGeneratedSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    }
+
+    const int targetHeight = qMax(originalImage.height(), generatedImage.height());
+    if (targetHeight <= 0) {
+        error = "Invalid image size for comparison.";
+        return false;
+    }
+
+    QImage leftImage = originalImage;
+    if (leftImage.height() != targetHeight) {
+        leftImage = leftImage.scaledToHeight(targetHeight, Qt::SmoothTransformation);
+    }
+
+    QImage rightImage = generatedImage;
+    if (rightImage.height() != targetHeight) {
+        rightImage = rightImage.scaledToHeight(targetHeight, Qt::SmoothTransformation);
+    }
+
+    const int padding = 12;
+    const int gap = 8;
+    const int canvasWidth = padding + leftImage.width() + gap + rightImage.width() + padding;
+    const int canvasHeight = padding + targetHeight + padding;
+
+    QImage canvas(canvasWidth, canvasHeight, QImage::Format_ARGB32);
+    canvas.fill(QColor("#111111"));
+
+    QPainter painter(&canvas);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const int imageTop = padding;
+    painter.drawImage(padding, imageTop, leftImage);
+    painter.drawImage(padding + leftImage.width() + gap, imageTop, rightImage);
+
+    painter.setPen(QColor("#4a4a4a"));
+    const int dividerX = padding + leftImage.width() + (gap / 2);
+    painter.drawLine(dividerX, imageTop, dividerX, imageTop + targetHeight);
+
+    comparisonImageBytes.clear();
+    QBuffer buffer(&comparisonImageBytes);
+    if (!buffer.open(QIODevice::WriteOnly) || !canvas.save(&buffer, "PNG")) {
+        error = "Failed to encode comparison image.";
+        return false;
+    }
+
+    return true;
+}
+}
 
 void MainWindow::refreshTargetSizeEditability()
 {
@@ -64,11 +154,26 @@ void MainWindow::addInputImages()
         m_inputImageList->addItem(file);
     }
 
+    if(m_inputImageList->count() > 0) {
+        const QString firstImagePath = m_inputImageList->item(0)->text();
+        QFile file(firstImagePath);
+        if (file.open(QIODevice::ReadOnly)) {
+            const QByteArray imageBytes = file.readAll();
+            updatePreviewDisplay(imageBytes);
+        }
+    } else {
+        m_previewLabel->setText("No Image");
+        m_previewLabel->setPixmap(QPixmap());
+    }
+
     if (!files.isEmpty()) {
         settings.setValue("Global/addInputImagesPath", QFileInfo(files.first()).absolutePath());
     }
 
     refreshTargetSizeEditability();
+    if (m_saveComparisonButton) {
+        m_saveComparisonButton->setEnabled(!m_lastGeneratedImageBytes.isEmpty() && m_inputImageList->count() > 0);
+    }
 }
 
 void MainWindow::removeSelectedImage()
@@ -78,7 +183,22 @@ void MainWindow::removeSelectedImage()
         delete m_inputImageList->takeItem(m_inputImageList->row(item));
     }
 
+    if(m_inputImageList->count() > 0) {
+        const QString firstImagePath = m_inputImageList->item(0)->text();
+        QFile file(firstImagePath);
+        if (file.open(QIODevice::ReadOnly)) {
+            const QByteArray imageBytes = file.readAll();
+            updatePreviewDisplay(imageBytes);
+        }
+    } else {
+        m_previewLabel->setText("No Image");
+        m_previewLabel->setPixmap(QPixmap());
+    }
+
     refreshTargetSizeEditability();
+    if (m_saveComparisonButton) {
+        m_saveComparisonButton->setEnabled(!m_lastGeneratedImageBytes.isEmpty() && m_inputImageList->count() > 0);
+    }
 }
 
 void MainWindow::chooseOutputDirectory()
@@ -135,4 +255,42 @@ void MainWindow::saveGeneratedImage()
 
     m_statusLabel->setText("Saved");
     m_resultEdit->append(QString("Saved image: %1").arg(saveResult.filePath));
+}
+
+void MainWindow::saveComparisonImage()
+{
+    if (m_inputImageList->count() <= 0) {
+        QMessageBox::warning(this, "No Input Image", "Please add an input image first.");
+        return;
+    }
+
+    QByteArray comparisonImageBytes;
+    QString comparisonError;
+    if (!buildComparisonImageBytes(m_inputImageList->item(0)->text(),
+                                   m_lastGeneratedImageBytes,
+                                   comparisonImageBytes,
+                                   comparisonError)) {
+        QMessageBox::critical(this, "Save Compare Failed", comparisonError);
+        return;
+    }
+
+    ImageService::SaveRequest request;
+    request.imageBytes = comparisonImageBytes;
+    request.outputFormat = "PNG";
+    request.outputDirPath = m_settingsMapper.outputDirPath();
+    request.effectiveSeed = m_lastEffectiveSeed;
+    request.preset = collectPresetObject();
+
+    const ImageService::SaveResult saveResult = m_imageService.saveGeneratedImage(request);
+    if (!saveResult.ok) {
+        if (request.outputDirPath.isEmpty()) {
+            QMessageBox::warning(this, "Missing Output Directory", saveResult.error);
+        } else {
+            QMessageBox::critical(this, "Save Compare Failed", saveResult.error);
+        }
+        return;
+    }
+
+    m_statusLabel->setText("Saved Compare");
+    m_resultEdit->append(QString("Saved comparison image: %1").arg(saveResult.filePath));
 }

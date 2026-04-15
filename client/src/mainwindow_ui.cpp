@@ -153,12 +153,15 @@ void MainWindow::buildUi()
     m_savePresetButton = new QPushButton("Save Preset", leftPanel);
     m_runButton = new QPushButton("Run", leftPanel);
     m_saveImageButton = new QPushButton("Save Result", leftPanel);
+    m_saveComparisonButton = new QPushButton("Save Compare", leftPanel);
     m_saveImageButton->setEnabled(false);
+    m_saveComparisonButton->setEnabled(false);
     m_statusLabel = new QLabel("Idle", leftPanel);
     actionLayout->addWidget(m_loadPresetButton);
     actionLayout->addWidget(m_savePresetButton);
     actionLayout->addWidget(m_runButton);
     actionLayout->addWidget(m_saveImageButton);
+    actionLayout->addWidget(m_saveComparisonButton);
     actionLayout->addWidget(m_statusLabel, 1);
     leftLayout->addLayout(actionLayout);
 
@@ -206,6 +209,7 @@ void MainWindow::connectSignals()
     connect(m_loadPresetButton, &QPushButton::clicked, this, &MainWindow::loadPreset);
     connect(m_runButton, &QPushButton::clicked, this, &MainWindow::startInference);
     connect(m_saveImageButton, &QPushButton::clicked, this, &MainWindow::saveGeneratedImage);
+    connect(m_saveComparisonButton, &QPushButton::clicked, this, &MainWindow::saveComparisonImage);
 
     connect(m_watcher, &QFutureWatcher<InferResult>::finished, this, [this]() {
         const InferResult r = m_watcher->result();
@@ -224,6 +228,7 @@ void MainWindow::connectSignals()
         m_lastEffectiveSeed = r.seed;
         updatePreviewDisplay(m_lastGeneratedImageBytes);
         m_saveImageButton->setEnabled(!m_lastGeneratedImageBytes.isEmpty());
+        m_saveComparisonButton->setEnabled(!m_lastGeneratedImageBytes.isEmpty() && m_inputImageList->count() > 0);
 
         QJsonObject obj;
         obj["ok"] = true;
@@ -247,5 +252,6 @@ void MainWindow::setRunningState(bool running)
     m_savePresetButton->setEnabled(!running);
     m_loadPresetButton->setEnabled(!running);
     m_saveImageButton->setEnabled(!running && !m_lastGeneratedImageBytes.isEmpty());
+    m_saveComparisonButton->setEnabled(!running && !m_lastGeneratedImageBytes.isEmpty() && m_inputImageList->count() > 0);
     m_statusLabel->setText(running ? "Running..." : m_statusLabel->text());
 }

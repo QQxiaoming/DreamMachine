@@ -49,6 +49,7 @@ private:
     void removeSelectedImage();
     void chooseOutputDirectory();
     void saveGeneratedImage();
+    void saveComparisonImage();
     void updatePreviewDisplay(const QByteArray &imageBytes);
     void savePreset();
     void loadPreset();
@@ -80,6 +81,7 @@ private:
     QSpinBox *m_portSpin = nullptr;
     QPushButton *m_runButton = nullptr;
     QPushButton *m_saveImageButton = nullptr;
+    QPushButton *m_saveComparisonButton = nullptr;
     QPushButton *m_savePresetButton = nullptr;
     QPushButton *m_loadPresetButton = nullptr;
     QTextEdit *m_resultEdit = nullptr;
